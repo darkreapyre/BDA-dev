@@ -1,0 +1,2 @@
+phoenix_version: 4.5.2-HBase-1.1
+phoenix_home: '{{ hadoop_user_home }}/phoenix-{{ phoenix_version }}-bin'

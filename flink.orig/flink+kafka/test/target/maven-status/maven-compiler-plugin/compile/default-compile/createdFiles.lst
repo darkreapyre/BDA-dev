@@ -1,0 +1,9 @@
+uno/Job.class
+uno/WordCount$LineSplitter.class
+uno/WriteIntoKafka.class
+uno/SocketTextStreamWordCount$LineSplitter.class
+uno/ReadFromKafka.class
+uno/WriteIntoKafka$SimpleStringSchema.class
+uno/WriteIntoKafka$SimpleStringGenerator.class
+uno/WordCount.class
+uno/SocketTextStreamWordCount.class

@@ -1,0 +1,143 @@
+---
+# R 
+- name: Add R respository
+  apt_repository: "repo='deb http://cran.rstudio.com/bin/linux/ubuntu trusty/'"
+
+- name: Add R repository public key
+  apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=E084DAB9
+
+- name: Update apt repository
+  apt: update_cache=yes
+
+- name: Install R LaTex and Pandoc
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - r-base
+    - r-base-dev
+    - r-recommended
+    - gdebi-core
+    - texlive
+    - texlive-latex-extra
+    - pandoc
+    - libapparmor1
+    - libcurl4-gnutls-dev
+
+- name: Allow the {{ cluster_user }} to install R packages
+  file: path=/usr/local/lib/R/site-library owner={{ cluster_user }} group={{ cluster_user }} mode=0777 state=directory recurse=yes
+
+# Jupyter
+- name: Install jupyter for python2
+  shell: pip install jupyter psutil pyyaml
+
+- name: Install jupyter for python3
+  shell: pip3 install jupyter psutil pyyaml
+
+- name: Create python2 kernel
+  shell: python2 -m ipykernel install
+
+- name: Create jupyter notebook config
+#  shell: jupyter notebook --generate-config
+#  become: yes
+#  become_user: admin
+#  become_method: su
+  shell: su - {{ cluster_user }} -c "jupyter notebook --generate-config"
+
+- name: Overwrite default config
+  template: src={{ item.src }} dest={{ item.dest }} owner={{ cluster_user }} group={{ cluster_user }}
+  with_items:
+    - {src: "jupyter_notebook_config.py.j2", dest: "/home/{{ cluster_user }}/.jupyter/jupyter_notebook_config.py"}
+
+# Test-helper
+- name: Download test helper
+  git: repo=https://github.com/hpec/test_helper.git dest=/home/{{ cluster_user }}/test_helper clone=yes
+
+- name: Install test helper
+  shell: python setup.py install chdir=/home/{{ cluster_user }}/test_helper
+
+# Rise
+- name: Download rise
+  git: repo=https://github.com/damianavila/RISE.git dest=/home/{{ cluster_user }}/rise clone=yes
+
+- name: Install rise
+  shell: python setup.py install chdir=/home/{{ cluster_user }}/rise
+  
+# Spark-kernel
+#- name: Copy spark-kernel to remote hosts
+#  sudo: yes
+#  template: src={{ item.src }} dest={{ item.dest }} owner=vagrant group=vagrant
+#  with_items:
+#    - {src: "spark-kernel-0.1.5-SNAPSHOT.tar.gz.j2", dest: "/opt/spark/spark-kernel-0.1.5-SNAPSHOT.tar.gz"}
+
+- name: Copy Spark-kernel to master host
+  copy: src=spark-kernel-0.1.5-SNAPSHOT.tar.gz dest=/opt owner={{ cluster_user }} group={{ cluster_user }} mode=0777
+
+- name: Extract spark-kernel archive
+  unarchive: src=/opt/spark-kernel-0.1.5-SNAPSHOT.tar.gz dest=/opt/ copy=no
+
+- name: Change spark-kernel ownership
+  file: path=/opt/spark-kernel owner={{ cluster_user }} group={{ cluster_user }} state=directory recurse=yes mode=0777
+#  shell: chown -R admin:admin /opt/spark-kernel
+#  sudo: yes
+
+#- name: Create Scala kernel path
+#  shell: su - vagrant -c "mkdir -p /home/vagrant/.local/share/jupyter/kernels/scala"
+#  shell: su - vagrant ln -s /opt/spark-kernel/logo-64x64.png /home/vagrant/.local/share/jupyter/kernels/scala/logo-64x64.png
+
+- name: Create the Jupyter Kernel Directory for Scala
+  file: path=/home/{{ cluster_user }}/.local/share/jupyter/kernels/scala state=directory owner={{ cluster_user }} group={{ cluster_user }} recurse=yes mode=0755
+
+- name: Create Scala kernel symlink
+  file: src=/opt/spark-kernel/logo-64x64.png dest=/home/{{ cluster_user }}/.local/share/jupyter/kernels/scala/logo-64x64.png owner={{ cluster_user }} group={{ cluster_user }} state=link
+
+- name: Create kernel.json
+#  sudo: yes
+  template: src={{ item.src }} dest={{ item.dest }} owner={{ cluster_user }} group={{ cluster_user }}
+  with_items:
+    - {src: "kernel.json.j2", dest: "/home/{{ cluster_user }}/.local/share/jupyter/kernels/scala/kernel.json"}
+
+#irkernel
+- name: Install necessary R packages for IRkernel
+  shell: R -e "install.packages(c('shiny', 'rzmq', 'repr', 'IRkernel', 'IRdisplay', 'rmarkdown', 'knitr', 'rjson', 'rPython', 'plyr', 'psych', 'reshape2'), repos = c('http://irkernel.github.io/', 'http://cran.rstudio.com/', 'http://www.freestatistics.org/cran/'))"
+
+- name: Install IRkernel
+  shell: R -e "IRkernel::installspec(user = FALSE)"
+
+#jupyter-extension
+- name: Download jupyter extensions
+  git: repo=https://github.com/ipython-contrib/IPython-notebook-extensions.git dest=/home/{{ cluster_user }}/extensions clone=yes
+
+- name: Install jupyter extensions
+  shell: python setup.py install chdir=/home/{{ cluster_user }}/extensions
+
+#rstudio-server
+- name: Download rstudio-server
+  get_url: url=http://download2.rstudio.org/rstudio-server-0.99.879-amd64.deb dest=/home/{{ cluster_user }}/rstudio-server-0.99.879-amd64.deb
+
+- name: Install RStudio Server 
+  command: gdebi -n /home/{{ cluster_user }}/rstudio-server-0.99.879-amd64.deb
+
+#shiny server
+- name: Downlaod Shiny Server
+  get_url: url=http://download3.rstudio.org/ubuntu-12.04/x86_64/shiny-server-1.4.1.759-amd64.deb dest=/home/{{ cluster_user }}/shiny-server-1.4.1.759-amd64.deb
+
+- name: Install Shiny Server
+  command: gdebi -n /home/{{ cluster_user }}/shiny-server-1.4.1.759-amd64.deb
+
+- name: Ensure admin user ownership for jupyter
+#  file: path=/home/vagrant/.local owner=vagrant group=vagrant recursive=yes
+  file: path=/home/{{ cluster_user }}/.local owner={{ cluster_user }} group={{ cluster_user }} state=directory recurse=yes mode=0755
+
+- name: Copy Python Notebook Settings
+  template: src=start-python-notebook.sh.j2 dest=/home/{{ cluster_user }}/start-python-notebook.sh owner={{ cluster_user }} group={{ cluster_user }} mode=0777  
+
+- name: Start Spark
+  shell: "{{ spark_home }}/sbin/start-all.sh"
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Start Jupyter Notebook Server
+  shell: start-python-notebook.sh chdir=/home/{{ cluster_user }}
+  become: yes
+  become: "{{ cluster_user }}"
+
+#- include: cassandra.yml

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>hbase.cluster.distributed</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hbase.rootdir</name>
+{% for host in groups[hadoop_cluster] if host in groups['hdfs_namenode'] %}
+{% if loop.first %}
+        <value>hdfs://{{ hostvars[host]['hadoop_hostname']|default(hostvars[host]['inventory_hostname']) }}:8020{{ hbase_data_dir }}</value>
+{% endif %}
+{% endfor %}
+    </property>
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+	<value>
+{%- set comma = joiner(",") -%}
+{%- for host in groups[hadoop_cluster] if host in groups['hbase_master'] -%}
+{{- comma() }}{{ hostvars[host]['hadoop_hostname']|default(hostvars[host]['inventory_hostname']) }}
+{%- endfor -%}
+	</value>
+    </property>
+{% if 'hbase_master' in group_names %}
+    <property>
+        <name>hbase.zookeeper.property.dataDir</name>
+        <value>{{ hbase_zookeeper_data_dir }}</value>
+    </property>
+{% endif %}
+</configuration>

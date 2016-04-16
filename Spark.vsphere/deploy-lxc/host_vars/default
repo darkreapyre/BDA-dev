@@ -1,0 +1,2 @@
+# for vagrant's "default" machine
+hadoop_hostname: localhost

@@ -1,0 +1,4 @@
+/opt/flink-0.10.1/test/test/src/main/java/uno/SocketTextStreamWordCount.java
+/opt/flink-0.10.1/test/test/src/main/java/uno/ReadFromKafka.java
+/opt/flink-0.10.1/test/test/src/main/java/uno/Job.java
+/opt/flink-0.10.1/test/test/src/main/java/uno/WordCount.java

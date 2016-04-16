@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>mapreduce.jobhistory.address</name>
+{% for host in groups[hadoop_cluster] if host in groups['mapred_historyserver'] %}
+{% if loop.first %}
+        <value>{{ hostvars[host]['hadoop_hostname']|default(hostvars[host]['inventory_hostname']) }}:10020</value>
+{% endif %}
+{% endfor %}
+    </property>
+    <property>
+        <name>mapreduce.jobhistory.webapp.address</name>
+{% for host in groups[hadoop_cluster] if host in groups['mapred_historyserver'] %}
+{% if loop.first %}
+        <value>{{ hostvars[host]['hadoop_hostname']|default(hostvars[host]['inventory_hostname']) }}:19888</value>
+{% endif %}
+{% endfor %}
+    </property>
+</configuration>

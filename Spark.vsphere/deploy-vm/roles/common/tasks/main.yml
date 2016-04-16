@@ -1,0 +1,149 @@
+---
+- name: Update apt cache
+  apt: update-cache=yes cache_valid_time=86400
+
+- name: Update all packages
+  apt: upgrade=dist
+
+- name: Install packages
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - git
+    - zip
+    - unzip
+    - curl
+    - wget
+    - build-essential
+    - python-pip
+    - python-dev
+    - python3-pip
+    - python3-dev
+    - libzmq3
+    - libzmq3-dev
+    - python-matplotlib
+    - python-numpy
+    - python-scipy
+    - python-pandas
+    - python3-matplotlib
+    - python3-numpy
+    - python3-scipy
+    - python3-pandas
+    - python-nose
+    - g++
+    - libopenblas-dev
+    - "{{ java_version }}"
+    - libjansi-java
+
+- name: Install Python 2 additional libraries
+  pip: name={{ item }}
+  with_items:
+    - scikit-learn
+    - Theano
+#    - seaborn
+    - pymc
+    - pydot
+    - uwsgi
+    - freetype-py
+    - pillow
+    - python-dateutil
+    - pytz
+    - six
+    - pygments
+    - readline
+    - pexpect
+    - cython
+    - networkx
+    - numexpr
+    - tables
+    - patsy
+    - statsmodels
+    - sympy
+#    - scikit-image
+    - xlrd
+    - xlwt
+  ignore_errors: yes
+
+- name: Install Tensorflow for Python2
+  become: yes
+  become_user: "{{ cluster_user }}"
+  command: sudo pip2 install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-{{ tflow_version }}-cp27-none-linux_x86_64.whl
+
+- name: Install Tensorflow for Python3
+  become: yes
+  become_user: "{{ cluster_user }}"
+  command: sudo pip3 install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-{{ tflow_version ))-cp34-cp34m-linux_x86_64.whl
+
+- name: Set JAVA_HOME in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'export JAVA_HOME={{ java_home }}'
+    regexp: '^(# *)?export JAVA_HOME='
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+#- name: Export java home (Manual)
+#  shell: echo "export JAVA_HOME={{ java_home }}" >> /home/{{ cluster_user }}/.bashrc
+##  shell: echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> /home/{{ cluster_user }}/.bashrc
+#  become: yes
+#  become_user: "{{ cluster_user }}"
+
+- name: Add sbt source
+  shell: echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+
+- name: Add keyserver
+  apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=642AC823
+
+- name: Install sbt
+  apt: name=sbt update_cache=yes
+
+- name: Download Scala
+  get_url: url=http://downloads.typesafe.com/scala/{{ scala_version }}/scala-{{ scala_version }}.deb?_ga=1.129140876.1867818617.1456337141 dest=/tmp
+#  get_url: url=http://downloads.typesafe.com/scala/2.10.6/scala-2.10.6.deb dest=/home/vagrant
+
+- name: Install Scala { scala_version }
+  apt: deb="/tmp/scala-{{ scala_version }}.deb"
+
+- name: Download apche maven
+  get_url: url=http://mirror.nbtelecom.com.br/apache/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz dest=/tmp
+
+- name: Extract maven
+  unarchive: copy=no creates=/opt/apache-maven-{{ maven_version }} dest=/opt src=/tmp/apache-maven-{{ maven_version }}-bin.tar.gz owner={{ cluster_user }} group={{ cluster_user }} mode=0755
+
+- name: Set M2_HOME in .bashrc
+  lineinfile:
+    dest: /home/{{ cluster_user }}/.bashrc
+    line: 'export M2_HOME=/opt/apache-maven-{{ maven_version }}'
+    regexp: 'export M2_HOME=/opt/apache-maven-{{ maven_version }}.*'
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Add maven to .bashrc
+  lineinfile:
+    dest: /home/{{ cluster_user }}/.bashrc
+    line: 'export PATH=/opt/apache-maven-{{ maven_version }}/bin:$PATH'
+    regexp: 'export PATH=/opt/apache-maven-{{ maven_version }}.*'
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+# OLD VERSION BEFORE TEST
+#- name: Download apache maven { maven_version }
+#  get_url: url=http://mirror.nbtelecom.com.br/apache/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz dest=/home/{{ cluster_user }}
+#
+#- name: Create maven directory
+#  file: path=/home/{{ cluster_user }}/apache-maven-{{ maven_version }} owner={{ cluster_user }} group={{ cluster_user }} state=directory recurse=yes
+#
+#- name: Extract maven
+#  unarchive: src=/home/{{ cluster_user }}/apache-maven-{{ maven_version }}-bin.tar.gz dest=/home/{{ cluster_user }}/apache-maven-{{ maven_version }} owner={{ cluster_user }} group={{ cluster_user }} copy=no
+##  shell: tar zxvf /home/admin/apache-maven-3.3.3-bin.tar.gz
+#  become: yes
+#  become_user: "{{ cluster_user }}"
+#
+#- name: Install maven
+#  shell: echo "export M2_HOME=/home/{{ cluster_user }}/apache-maven-{{ maven_version }}" >> /home/{{ cluster_user }}/.bashrc
+#  become: yes
+#  become_user: "{{ cluster_user }}"
+#
+#- name: Export maven to path
+#  shell: echo "export PATH=/home/{{ cluster_user }}/apache-maven-{{ maven_version }}/bin:$PATH" >> /home/{{ cluster_user }}/.bashrc
+#  become: yes
+#  become_user: "{{ cluster_user }}"

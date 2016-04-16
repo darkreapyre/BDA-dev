@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# ------------------------- CONFIG PARAMS ----------------------------
+provider = "virtualbox"      # VM provider
+#type = "ubuntu/trusty64"     # system to be installed on master
+type = "bento/centos-7.1"
+RAM = 16384                  # When testing Tachyon
+#RAM = 4096                   # RAM in MB
+CPUs = 2                     # CPU cores
+Name = "admin-node"          # name of the master node (used in scripts/spark-env-sh)
+# -------------------------- END CONFIG PARAMS -----------------------
+
+
+Vagrant.configure(2) do |config|
+# config Admin node 
+  config.vm.define Name do |admin|
+    admin.vm.box = type
+    admin.vm.hostname = Name
+    admin.vm.provider provider do |vb|
+      vb.memory = RAM
+      vb.cpus = CPUs 
+      vb.name = Name
+    end
+    #admin.vm.network "public_network", bridge: "Intel(R) PRO/1000 MT Network Connection", adapter: "1", ip: IP
+    #admin.vm.synced_folder "../provision", "/provision"
+    admin.vm.provision :shell, :path => "bootstrap-centos.sh"
+    #admin.vm.provision :shell, :path => "bootstrap-trusty.sh"
+  end
+end

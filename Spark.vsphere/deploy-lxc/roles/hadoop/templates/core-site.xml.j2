@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+{% for host in groups[hadoop_cluster] if host in groups['hdfs_namenode'] %}
+{% if loop.first %}
+        <value>hdfs://{{ hostvars[host]['hadoop_hostname']|default(hostvars[host]['inventory_hostname']) }}/</value>
+{% endif %}
+{% endfor %}
+    </property>
+</configuration>

@@ -1,0 +1,9 @@
+---
+
+- name: restart yarn resourcemanager
+  service: name=yarn-resourcemanager state=restarted
+  when: '"yarn_resourcemanager" in group_names'
+
+- name: restart yarn nodemanager
+  service: name=yarn-nodemanager state=restarted
+  when: '"yarn_nodemanager" in group_names'

@@ -1,0 +1,8 @@
+hadoop_user: hadoop
+hadoop_user_home: /home/hadoop
+hadoop_group: hadoop
+
+hadoop_version: 2.7.1
+hadoop_home: '{{ hadoop_user_home }}/hadoop-{{ hadoop_version }}'
+
+hadoop_keep_etc_hosts: no

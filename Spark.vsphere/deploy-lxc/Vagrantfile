@@ -1,0 +1,57 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = "ubuntu/vivid64"
+
+  config.vm.provider "virtualbox" do |vbox|
+    vbox.memory = 2048
+    vbox.cpus = 1
+  end
+
+  config.vm.network "private_network", type: "dhcp"
+
+  config.vm.provision "shell", inline: "apt-get update"
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "hadoop.yml"
+    ansible.groups = {
+      "hdfs_namenode" => ["default"],
+      "hdfs_datanode" => ["default"],
+      "hbase_master" => ["default"],
+      "hbase_zookeeper" => ["default"],
+      "hbase_regionserver" => ["default"],
+      "phoenix_queryserver" => ["default"],
+      "hdfs:children" => ["hdfs_namenode", "hdfs_datanode"],
+      "hbase:children" => ["hbase_master", "hbase_zookeeper", "hbase_regionserver"],
+      "phoenix:children" => ["phoenix_queryserver"],
+      "hadoop:children" => ["hdfs", "yarn", "mapred", "hbase", "phoenix"],
+    }
+    ansible.extra_vars = {
+      "hadoop_cluster" => "hadoop",
+      "hadoop_keep_etc_hosts" => "yes",
+      "java_package" => "openjdk-7-jre-headless",
+      "java_home" => "/usr/lib/jvm/java-7-openjdk-amd64",
+    }
+    ansible.sudo = true
+  end
+
+  # Phoenix query server
+  #config.vm.network "forwarded_port", guest: 8765, host: 8765
+
+  # ZooKeeper
+  #config.vm.network "forwarded_port", guest: 2181, host: 2181
+
+  # HDFS name node web
+  #config.vm.network "forwarded_port", guest: 50070, host: 50070
+
+  # YARN resource manager web
+  #config.vm.network "forwarded_port", guest: 8088, host: 8088
+
+  # YARN node manager web
+  #config.vm.network "forwarded_port", guest: 50060, host: 50060
+
+end

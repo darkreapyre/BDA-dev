@@ -1,0 +1,32 @@
+---
+
+- name: download phoenix tarball
+  get_url:
+    url: 'http://apache.osuosl.org/phoenix/phoenix-{{ phoenix_version }}/bin/phoenix-{{ phoenix_version }}-bin.tar.gz'
+    dest: '{{ hadoop_user_home }}/phoenix-{{ phoenix_version }}-bin.tar.gz'
+  sudo: yes
+  sudo_user: '{{ hadoop_user }}'
+  tags:
+    - phoenix
+
+- name: extract phoenix tarball
+  command: '/usr/bin/env tar xf phoenix-{{ phoenix_version }}-bin.tar.gz'
+  args:
+    chdir: '{{ hadoop_user_home }}'
+    creates: '{{ hadoop_user_home }}/phoenix-{{ phoenix_version}}-bin'
+  sudo: yes
+  sudo_user: '{{ hadoop_user }}'
+  tags:
+    - phoenix
+
+- name: symlink phoenix jar to hbase home
+  file:
+    src: '{{ hadoop_user_home }}/phoenix-{{ phoenix_version}}-bin/phoenix-{{ phoenix_version }}-server.jar'
+    dest: '{{ hbase_home }}/lib/phoenix-{{ phoenix_version }}-server.jar'
+    state: link
+  tags:
+    - phoenix
+  when: '"hbase" in group_names'
+
+- include: queryserver.yml
+  when: '"phoenix_queryserver" in group_names'

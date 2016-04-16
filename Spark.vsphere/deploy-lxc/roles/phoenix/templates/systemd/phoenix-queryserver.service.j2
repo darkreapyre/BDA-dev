@@ -1,0 +1,15 @@
+[Unit]
+Description=Phoenix Query Server
+After=network.target
+
+[Service]
+Environment=HADOOP_HOME={{ hadoop_home }} HBASE_HOME={{ hbase_home }} HBASE_CONF_DIR={{ hbase_home }}/conf HBASE_CLASSPATH={{ phoenix_home }}/phoenix-server-{{ phoenix_version }}-runnable.jar
+WorkingDirectory={{ phoenix_home }}
+ExecStart={{ hbase_home }}/bin/hbase org.apache.phoenix.queryserver.server.Main
+User={{ hadoop_user }}
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

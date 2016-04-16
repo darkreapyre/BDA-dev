@@ -1,0 +1,14 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = 'vsphere'
+  config.vm.box_url = './example_box/dummy.box'
+
+  config.vm.provider :vsphere do |vsphere|
+    vsphere.host = 'vcenter.synapse.local'
+    vsphere.compute_resource_name = 'VRTX'
+    vsphere.resource_pool_name = 'BigData'
+    vsphere.template_name = 'Production/photon-tmp'
+    vsphere.user = 'administrator@vsphere.local'
+    vsphere.password = 'Fuck_Y0u!'
+    vsphere.insecure = true
+  end
+end

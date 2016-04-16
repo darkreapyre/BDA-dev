@@ -1,0 +1,6 @@
+---
+- name: Create the spark slaves file on master
+  template: src=slaves.j2 dest={{ spark_home }}/conf/slaves owner={{ cluster_user }} group={{ cluster_user }}
+
+- name: Copy Spark configuration settings
+  template: src=spark-env.sh.j2 dest={{ spark_home }}/conf/spark-env.sh owner={{ cluster_user }} group={{ cluster_user }} mode=0777

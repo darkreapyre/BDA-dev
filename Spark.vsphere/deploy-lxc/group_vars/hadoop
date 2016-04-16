@@ -1,0 +1,5 @@
+java_package: openjdk-7-jre-headless
+java_home: /usr/lib/jvm/java-7-openjdk-amd64
+hadoop_version: 2.7.1
+hbase_version: 1.1.2
+phoenix_version: 4.5.2-HBase-1.1

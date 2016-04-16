@@ -1,0 +1,13 @@
+---
+
+- name: restart hdfs namenode
+  service: name=hdfs-namenode state=restarted
+  when: '"hdfs_namenode" in group_names'
+
+- name: restart hdfs secondarynamenode
+  service: name=hdfs-secondarynamenode state=restarted
+  when: '"hdfs_secondarynamenode" in group_names'
+
+- name: restart hdfs datanode
+  service: name=hdfs-datanode state=restarted
+  when: '"hdfs_datanode" in group_names'

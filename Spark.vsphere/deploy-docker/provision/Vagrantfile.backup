@@ -1,0 +1,32 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# First verify the necessary plugins are loaded
+#unless Vagrant.has_plugin?("vagrant-vsphere")
+#  raise 'vagrant-vsphere is not installed!'
+#end
+#unless Vagrant.has_plugin?("vagrant-guests-photon")
+#  raise 'vagrant-guests-photon is not installed!'
+#end
+
+Vagrant.configure("2") do |config|
+  config.vm.box = 'vsphere'
+  config.vm.box_url = './example_box/dummy.box'
+
+  config.vm.provider :vsphere do |vsphere|
+    vsphere.host = 'vcenter.synapse.local'
+    vsphere.name = 'master-node'
+    vsphere.clone_from_vm = true
+    vsphere.template_name = 'Production/ubuntu-tmp'
+    #vsphere.compute_resource_name = 'VRTX'
+    #vsphere.compute_resource_name = 'slot-02.synapse.local'
+    #vsphere.compute_resource_name = 'vcenter.synapse.local'
+    #vsphere.resource_pool_name = 'VRTX'
+    #vsphere.template_name = 'phonton-tmp' <--  Test with Photon Later
+    #vsphere.template_name = 'Production/ubuntu-tmp'
+    vsphere.user = 'administrator@vsphere.local'
+    #vsphere.user = 'vsphere.local\\Administrator'
+    vsphere.password = 'Fuck_Y0u!'
+    vsphere.insecure = true
+  end
+end
