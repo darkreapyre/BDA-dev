@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 # ------------------------- GLOBAL CONFIG PARAMS ----------------------------
-Total = 9                                    # Total Number of hosts
+Total = 6                                    # Total Number of hosts
 Username = "administrator@vsphere.local"     # vSphere Username
 Password = "Fuck_Y0u!"                       # vSphere Password
 Cluster = "VRTX"                             # vSphere Cluster

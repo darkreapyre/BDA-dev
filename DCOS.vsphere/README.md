@@ -80,4 +80,22 @@ $ shutdown -P now
 ```
 
 ## Configure the *bootstrap node*
-See the [system requirements](https://dcos.io/docs/1.7/administration/installing/custom/system-requirements/) for the *bootstrap node*. __Note__, however that for this architecture, we will not be configuring the the *HAProxy* on the *bootstrap node*. The `Vagrantfile` in this repository is already configured. 
+See the [system requirements](https://dcos.io/docs/1.7/administration/installing/custom/system-requirements/) for the *bootstrap node*. __Note__, however that for this architecture, we will not be configuring the the *HAProxy* on the *bootstrap node* as the docment suggest. The `Vagrantfile` in this repository is already configured to launch the __ansible__ node to provision the virtual machines. To tweak the confgiration, go to `<YOUR_BOX_FOLDER/provision>`, and edit the `Vagrantfile` to change the parameters: 
+
+| Parameter  | Description | Default value |
+|------------|-------------|:-------------:|
+| *Total* | The total number of virtual machines to create, including *bootstratp*, *masters* and *workers*; maximum of __9__.  | 6 |
+| *Username* | The vSphere user with sufficient privlidges to create/clone virtual machines. | "Administrator@vsphere.local" |
+| *Password* | The password for the above user.  | NA |
+| *Cluster* | The name of the ESXi Cluster where the virtual machines will be running. | NA |
+| *Template* | The name of the teamplate the created in the previous section. | "centos7-tmp" |
+| *Host* | The name of the ESXi Host or vCenter Host. | NA |
+
+By default, __6__ virtual machines are required, with a maximum of __9__ giving a total __5__ *worker* maschines. The minimum are as follows:
+
+| Name | Role | Quantity |
+|------|------|:--------:|
+| *bootstrap* | Bootstrap DC/OS. | 1 |
+| *master-[1-3]* | DC/OS Master | 3 |
+| *worker-[1-2]* | DC/OS Worker and HAProxy | 2 |
+Once the `Vagrantfile` is configured, simply execute `vagrant up` to provision the __ansible__ control node. This node will provision the required amount of virtual machines on vSphere and prepare the necessary cmponents for the the *bootstrap* host to complete the DC/OS installation. 
