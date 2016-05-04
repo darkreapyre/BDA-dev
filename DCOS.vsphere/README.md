@@ -4,5 +4,80 @@ __WORK_IN_PROGRESS!!!__
 ## Overview
 This repository outlines the installation process of getting open source [DC/OS](https://mesosphere.com/blog/2016/04/19/open-source-dcos/) containers with Spark, running on Vmware vSphere. In essence this document details taking the installation steps outlined in [The Mesosphere guide to getting started with DC/OS](https://mesosphere.com/blog/2016/04/20/mesosphere-guide-getting-started-dcos/) and porting them to run on vSphere using Ansible as the deployment framework.  It is important to __note__ that this document outlines the DC/OS installation only, for testing and evaluation purposes, to verify if this is indeed the correct architecture for Spark and Hadoop etc.
 
+## Requirements
+The following are the basic components needed to start. 
+1. A working vSphere 6.0 environment
+2. Vagrant 1.8.1
+3. Vagrant Plugins:
+  - _vagrant-guests-photon_
+  - _vagrant-vsphere_  
+    __Note:__ _vagrant-vsphere_ requires the that [Nokogiri](http://www.nokogiri.org/tutorials/installing_nokogiri.html) be installed.
+4. [Centos 7 (1511) Minimal Install](http://buildlogs.centos.org/rolling/7/isos/x86_64/CentOS-7-x86_64-Minimal.iso)
+
+## Create the Centos 7 Template
+Creating the template for Vmware is exactly the same as creating a Vagrant "box". Therefore, the following is [based on](http://www.hostedcgi.com/how-to-create-a-centos-7-0-vagrant-base-box/) that process. After creating the *centos7-tmp* virtual machine, power it up, complete a minimal Centos 7 installation, login as `root` and perform the following:  
+
+__Note:__ When installing Centos 7, make sure to set the `root` password to `vagrant`.
+- Install VMware Tools.
+```sh
+$ yum -y install open-vm-tools
+```
+- Configure the `vagrant` user.
+```sh
+$ useradd vagrant
+$ passwd vagrant # Set the password to vagrant
+```
+- Add the `vagrant` user to `/etc/sudoers`.
+```sh
+$ echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+```
+- To allow Vagrant to apply changes during startup, comment out `requiretty` in the `/etc/sudoers` file.
+```sh
+$ sed -i 's/^\(Defaults.*requiretty\)/#\1/' /etc/sudoers
+```
+- Set `SELinux` to *permissive* mode.
+```sh
+$ sed -i -e 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config
+```
+- Create the `vagrant` user public key configuration.
+```sh
+$ mkdir /home/vagrant/.ssh && chmod 700 /home/vagrant/.ssh # Create the `.ssh` directory
+$ curl https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub >> /home/vagrant/.ssh/authorized_keys # get the public key
+$ chmod 600 /home/vagrant/.ssh/authorized_keys # Set the permission
+$ chown -R vagrant:vagrant /home/vagrant # Set the correct ownership
+```
+- Load the basic packages.
+```sh
+$ yum -y install git wget curl zip unzip ntp openssh-clients
+```
+- Enable `ssh` and `ntp` on startup.
+```sh
+$ chkconfig ntpd on && chkconfig sshd on
+```
+- Disable `iptables` (if it's loaded).
+```sh
+chkconfig iptables off && chkconfig ip6tables off
+```
+- Prepare the virtual machine template by deleting unique and and temporary data.
+```sh
+$ yum update # Update the system
+$ yum clean all
+$ rm -f /etc/udev/rules.d/70* # Remove `udev` hardware rules
+$ sed -i '/^\(HWADDR\|UUID\)=/d' /etc/sysconfig/network-scripts/ifcfg-enXXX # Remove MAC, UUID from ifcfg; where XXX is the name 
+$ rm -f /etc/ssh/*key* # Remove host keys
+$ /usr/sbin/logrotate -f /etc/logrotate.conf # Start logrotate to shrink logspace used
+$ rm -rf /tmp/*  # Clean up the `tmp` directory
+$ rm -rf /var/tmp/*  
+$ rm -f ~root/.bash_history # Clean `root` bash and ssh history
+$ unset HISTFILE
+$ rm -rf ~root/.ssh/ 
+$ rm -f ~root/anaconda-ks.cfg # Remove the kickstart file
+```
+__Note:__ The interface name (ifcfg-enXXX) can be found by running `ip link`.
+- Shut down the server and convert it to a template
+```sh
+$ shutdown -P now
+```
+
 ## Configure the *bootstrap node*
 See the [system requirements](https://dcos.io/docs/1.7/administration/installing/custom/system-requirements/) for the *bootstrap node*. __Note__, however that for this architecture, we will not be configuring the the *HAProxy* on the *bootstrap node*. The `Vagrantfile` in this repository is already configured. 

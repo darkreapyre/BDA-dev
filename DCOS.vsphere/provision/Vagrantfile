@@ -1,35 +1,23 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-require 'yaml'
-
-# Load the initialization file `init.yml`
-@cmd = YAML.load_file('init.yml')
-puts @cmd.inspect
-
 # ------------------------- GLOBAL CONFIG PARAMS ----------------------------
-Total = @cmd['Total']
-Username = @cmd['Username']
-Password = @cmd['Password']
-Pool = @cmd['Pool']
-Cluster = @cmd['Cluster']
-Template = @cmd['Template']
-Host = @cmd['Host']
-Master_User = @cmd['Master_User']
-Master_Password = @cmd['Master_Pass']
-Hadoop_Version = @cmd['Hadoop_Version']
-Spark_Version = @cmd['Spark_Version']
-Java_Version = @cmd['Java_Version']
-Maven_Version = @cmd['Maven_Version']
-Scala_Version = @cmd['Scala_Version']
-TFlow_Version = @cmd['TFlow_Version']
+Total = 9                                    # Total Number of hosts
+Username = "administrator@vsphere.local"     # vSphere Username
+Password = "Fuck_Y0u!"                       # vSphere Password
+Cluster = "VRTX"                             # vSphere Cluster
+Template = "centos7-tmp"                     # Template to clone from
+Host = "vcenter.synapse.local"               # vCenter Host
+#Master_User = "admin"
+#Master_Password = "ADMIN"
 # -------------------------- END GLOBAL CONFIG PARAMS -----------------------
 
 # Build Ansible Groups to dynamically add Virtual Machines
 groups = {
+  "other" => [],
   "masters" => [],
-  "slaves" => [],
-  "all_groups:children" => ["masters", "slaves"]
+  "workers" => [],
+  "all_groups:children" => ["other", "masters", "workers"]
 }
 
 Vagrant.configure("2") do |config|
@@ -38,11 +26,14 @@ Vagrant.configure("2") do |config|
   config.vm.boot_timeout = 600
   (1..Total).each do |i|
     if i == 1
-      name = "master"
+      name = "bootstrap"
+      groups["other"] << name
+    elseif i <= 4 and i! = 1
+      name = "master-#{i - 1}"
       groups["masters"] << name
     else
-      name = "slave-#{i - 1}"
-      groups["slaves"] << name
+      name = "worker-#{i - 4}"
+      groups["workers"] << name
     end
     config.vm.define "#{name}" do | config |
       config.vm.hostname = name
@@ -50,19 +41,10 @@ Vagrant.configure("2") do |config|
         config.vm.provision :ansible do |ansible|
           ansible.playbook = "site.yml"
           ansible.groups = groups
-          ansible.extra_vars = {
-            "cluster_user" => Master_User,
-            "cluster_password" => Master_Password,
-            "hadoop_version" => Hadoop_Version,
-            "hadoop_home" => "/opt/hadoop",
-            "spark_version" => Spark_Version,
-            "spark_home" => "/opt/spark",
-            "scala_version" => Scala_Version,
-            "tflow_version" => TFlow_Version,
-            "maven_version" => Maven_Version,
-            "java_version" => Java_Version,
-            "java_home" => "/usr/lib/jvm/java-7-openjdk-amd64"
-          }
+          #ansible.extra_vars = {
+            #"cluster_user" => Master_User,
+            #"cluster_password" => Master_Password
+          #}
           ansible.limit = "all"
           ansible.verbose = "v"
           ansible.raw_ssh_args = ['-o ControlPersist=30m']
