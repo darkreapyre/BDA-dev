@@ -1,17 +1,17 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# ------------------------- GLOBAL CONFIG PARAMS ----------------------------
+# ------------------------- GLOBAL CONFIG PARAMS ------------------------------------
 Total = 6                                    # Total Number of hosts
 Username = "administrator@vsphere.local"     # vSphere Username
 Password = "Fuck_Y0u!"                       # vSphere Password
 Cluster = "VRTX"                             # vSphere Cluster
 Template = "centos7-tmp"                     # Template to clone from
 Host = "vcenter.synapse.local"               # vCenter Host
-Master_User = "cluster"
-Master_Password = "cluster"
+Master_User = "cluster"                      # Master ssh user for the cluster
+Master_Password = "cluster"                  # Master ssh pasword for the cludster
 DCOS_Installer = "https://downloads.dcos.io/dcos/EarlyAccess" #DC/OS URL
-# -------------------------- END GLOBAL CONFIG PARAMS -----------------------
+# -------------------------- END GLOBAL CONFIG PARAMS ------------------------------
 
 # Build Ansible Groups to dynamically add Virtual Machines
 groups = {

@@ -94,7 +94,7 @@ See the [system requirements](https://dcos.io/docs/1.7/administration/installing
 | *Master_Password* | The master user password. | "cluster" |
 | *DCOS_Installer* | The URL for the current version of the *dcos_generate_config.sh* file. | NA |
 
-By default, __6__ virtual machines are required,  he minimums are as follows:
+By default, __6__ virtual machines are required, but the minimums are as follows:
 
 | Name | Role | Quantity |
 |------|------|:--------:|

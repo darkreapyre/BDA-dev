@@ -7,7 +7,7 @@ agent_list:
 - <agent-private-ip-5>
 # Use this bootstrap_url value unless you have moved the DC/OS installer assets.
 bootstrap_url: file:///opt/dcos_install_tmp
-cluster_name: <cluster-name>
+cluster_name: {{ cluster_user }}
 master_discovery: static
 master_list:
 - <master-private-ip-1>
@@ -17,4 +17,4 @@ resolvers:
 - 8.8.4.4
 - 8.8.8.8
 ssh_port: 22
-ssh_user: <username>
+ssh_user: {{ cluster_user }}
