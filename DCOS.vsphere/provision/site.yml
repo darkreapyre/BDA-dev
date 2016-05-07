@@ -2,7 +2,7 @@
 - hosts: all
   tasks:
     - name: Create Admins group
-      group: name=admin state=present
+      group: name={{ cluster_user }} state=present
       sudo: yes
 
     - name: Create Admin user on all nodes
@@ -18,15 +18,15 @@
             state=present
       sudo: yes
 
-    - name: Add Admin user to sudoers
+    - name: Add cluster user to sudoers
       lineinfile: "dest=/etc/sudoers insertafter=EOF line='{{ cluster_user }} ALL=(ALL) NOPASSWD: ALL' regexp='{{ cluster_user }} ALL=(ALL) NOPASSWD: ALL' state=present"
       sudo: yes
 
-    - name: Ensure Admin user ssh directory exists
+    - name: Ensure cluster user ssh directory exists
       file: dest=/home/{{ cluster_user }}/.ssh owner={{ cluster_user }} group={{ cluster_user }} state=directory mode=0700
       sudo: yes
       
-    - name: Disable strict host checking for the Admin user
+    - name: Disable strict host checking for the cluster user
       lineinfile: create=yes
                   dest=/home/{{ cluster_user }}/.ssh/config
                   regexp=StrictHostKeyChecking
@@ -37,50 +37,17 @@
       become: yes
       become_user: "{{ cluster_user }}"
     
-- hosts: master
+- hosts: bootstrap
   tasks:
     - name: Setup passwordless ssh
       shell: /bin/cat /home/{{ cluster_user }}/.ssh/id_rsa.pub >> /home/{{ cluster_user }}/.ssh/authorized_keys
       become: yes
       become_user: "{{ cluster_user }}"
-    
-    # Use the following for one time application downloads
-    - name: Create local Appliaction Repository
-      local_action: file path=apps state=directory
-    
-    - name: Download Hadoop locally
-      local_action: get_url url=http://apache.claz.org/hadoop/common/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz dest=apps/hadoop-{{ hadoop_version }}.tar.gz
-    
-    - name: Download Spark locally
-      local_action: get_url url=http://apache.claz.org/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.6.tgz dest=apps/spark-{{ spark_version }}-bin-hadoop2.6.tgz
-    
-    - name: Download apache maven
-      local_action: get_url url=http://mirror.nbtelecom.com.br/apache/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz dest=apps/apache-maven-{{ maven_version }}-bin.tar.gz
-    
-    - name: Download scala
-      local_action: get_url url=http://downloads.typesafe.com/scala/{{ scala_version }}/scala-{{ scala_version }}.deb?_ga=1.129140876.1867818617.1456337141 dest=apps/scala-{{ scala_version }}.deb
 
-    # The following is not necessary because "unarchive" has the "copy: yes" parameter
-    #- name: Distribute downloaded files to slaves
-    #  copy: src=apps/{{ item }} dest=/home/{{ cluster_user }}/{{ item }}
-    #  with_items:
-    #    - hadoop-{{ hadoop_version }}.tar.gz
-    #    - spark-{{ spark_version }}-bin-hadoop2.6.tgz
-    #    - apache-maven-{{ maven_version }}-bin.tar.gz
-    #    - scala-{{ scala_version }}.deb
-    #  become: yes
-    #  become_user: "{{ cluster_user }}"
-
-    # Distribute the Scala file to the master since it's a binary package
-    - name: Distribute Scala to master
-      copy: src=apps/scala-{{ scala_version }}.deb dest=/home/{{ cluster_user }}/scala-{{ scala_version }}.deb
-      become: yes
-      become_user: "{{ cluster_user }}"
-      
     - name: Create local directory for ssh keys
       local_action: file path=sshkeys state=directory
     
-    - name: Fetch ssh keys from the master
+    - name: Fetch ssh keys from the bootstrap node
       fetch: src=/home/{{ cluster_user }}/.ssh/{{ item }} dest=sshkeys/{{ item }} flat=yes
       with_items:
         - id_rsa
@@ -89,31 +56,14 @@
       become: yes
       become_user: "{{ cluster_user }}"
 
-- hosts: slaves
+- hosts: masters
   tasks:
-    - name: Distribute ssh keys to slaves
+    - name: Distribute ssh keys to masters
       copy: src=sshkeys/{{ item }} dest=/home/{{ cluster_user }}/.ssh/{{ item }}
       with_items:
         - id_rsa
         - id_rsa.pub
         - authorized_keys
-      become: yes
-      become_user: "{{ cluster_user }}"
-    
-    # The following is not necessary because "unarchive" has the "copy: yes" parameter
-    #- name: Distribute downloaded files to slaves
-    #  copy: src=apps/{{ item }} dest=/home/{{ cluster_user }}/{{ item }}
-    #  with_items:
-    #    - hadoop-{{ hadoop_version }}.tar.gz
-    #    - spark-{{ spark_version }}-bin-hadoop2.6.tgz
-    #    - apache-maven-{{ maven_version }}-bin.tar.gz
-    #    - scala-{{ scala_version }}.deb
-    #  become: yes
-    #  become_user: "{{ cluster_user }}"
-    
-    # Distribute the Scala file to the master since it's a binary package
-    - name: Distribute Scala to slaves
-      copy: src=apps/scala-{{ scala_version }}.deb dest=/home/{{ cluster_user }}/scala-{{ scala_version }}.deb
       become: yes
       become_user: "{{ cluster_user }}"
     
@@ -126,34 +76,21 @@
       become: yes
       become_user: "{{ cluster_user }}"
 
-- name: Install base confiuration on all servers
-  hosts: all
+- hosts: workers
+  tasks:
+    - name: Distribute ssh keys to workers
+      copy: src=sshkeys/{{ item }} dest=/home/{{ cluster_user }}/.ssh/{{ item }}
+      with_items:
+        - id_rsa
+        - id_rsa.pub
+        - authorized_keys
+      become: yes
+      become_user: "{{ cluster_user }}"
+
+- name: Configure the bootstrap node
+  hosts: bootstrap
   remote_user: vagrant
   sudo: yes
 
   roles:
-    - common
-
-- name: Install hadoop on all servers
-  hosts: all
-  remote_user: vagrant
-  sudo: yes
-  
-  roles:
-    - hadoop
-
-- name: Install spark on all servers
-  hosts: all
-  remote_user: vagrant
-  sudo: yes
-  
-  roles:
-    - spark
-
-- name: Configure manual master configuration to test
-  hosts: master
-  remote_user: vagrant
-  sudo: yes
-  
-  roles:
-    - dsbox
+    - bootstrap

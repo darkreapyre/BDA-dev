@@ -90,12 +90,15 @@ See the [system requirements](https://dcos.io/docs/1.7/administration/installing
 | *Cluster* | The name of the ESXi Cluster where the virtual machines will be running. | NA |
 | *Template* | The name of the teamplate the created in the previous section. | "centos7-tmp" |
 | *Host* | The name of the ESXi Host or vCenter Host. | NA |
+| *Master_User* | The master user for the cluster. This user will be used for DC/OS SSH access to all nodes. | "cluster" |
+| *Master_Password* | The master user password. | "cluster" |
+| *DCOS_Installer* | The URL for the current version of the *dcos_generate_config.sh* file. | NA |
 
-By default, __6__ virtual machines are required, with a maximum of __9__ giving a total __5__ *worker* maschines. The minimum are as follows:
+By default, __6__ virtual machines are required,  he minimums are as follows:
 
 | Name | Role | Quantity |
 |------|------|:--------:|
-| *bootstrap* | Bootstrap DC/OS. | 1 |
+| *bootstrap* | Bootstrap Docker and DC/OS. | 1 |
 | *master-[1-3]* | DC/OS Master | 3 |
 | *worker-[1-2]* | DC/OS Worker and HAProxy | 2 |
 Once the `Vagrantfile` is configured, simply execute `vagrant up` to provision the __ansible__ control node. This node will provision the required amount of virtual machines on vSphere and prepare the necessary cmponents for the the *bootstrap* host to complete the DC/OS installation. 
