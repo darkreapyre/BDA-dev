@@ -6,5 +6,9 @@ echo "deb http://debian.datastax.com/datastax-ddc $CASSANDRA_VER main" | sudo te
 curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add -
 sudo apt-get update
 
-# install DataStax Cassandra
+# installs the Cassandra utilities such as sstablelevelreset, sstablemetadata, sstableofflinerelevel, sstablerepairedset, sstablesplit, token-generator.
 sudo apt-get -y install datastax-ddc
+
+# Because the Cassandra service starts automatically, stop the server and clear the data on each node
+sudo service cassandra stop
+sudo rm -rf /var/lib/cassandra/data/system/*

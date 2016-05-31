@@ -120,6 +120,9 @@ if [[ "$TYPE" == "MASTER" ]]; then
       #ssh-copy-id -i ~/.ssh/id_rsa.pub -o "StrictHostKeyChecking=no" vagrant@"${SLAVE}-${i}"
     done
   fi
+  # configure Cassandra (see http://docs.datastax.com/en/cassandra/3.x/cassandra/initialize/initSingleDS.html)
+  # and https://www.digitalocean.com/community/tutorials/how-to-use-the-apache-cassandra-one-click-application-image
+  
 fi
 
 echo $LINE
