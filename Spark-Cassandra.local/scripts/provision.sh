@@ -4,8 +4,8 @@
 # -t: type of node <MASTER|SLAVE>
 # -n: # of slaves <1-9>
 # -a: main IP address (i.e. 10.20.30.10_) used for master (10.20.30.100) & slaves (10.20.30.10[1-9])
-# -m: name for the master (i.e. "spark-master")
-# -s: name for the slaves (i.e. "spark-slave")
+# -m: name for the master (i.e. "master")
+# -s: name for the slaves (i.e. "slave")
 
 usage() { echo "Usage: $0 [-t <MASTER|SLAVE>] [-n <1-9>] [-a <ip_address>] [-m <string>] [-s <string>]" 1>&2; exit 1; }
 
@@ -108,7 +108,23 @@ for SCRIPT in $SCRIPTS; do
   fi
 done
 
-# post-provision of the MASTER
+# Initialize cassandra muli-node cluster (single data center)
+# configure Cassandra (see http://docs.datastax.com/en/cassandra/3.x/cassandra/initialize/initSingleDS.html); 
+# https://www.digitalocean.com/community/tutorials/how-to-use-the-apache-cassandra-one-click-application-image
+# and https://github.com/danielrmeyer/cassandra-analytics/blob/c337dfe726e7846f51cdb303741d78284da8a8f2/provisioning/setup_cassandra.sh
+#NODE_IP = `hostname -I | cut -d' ' -f2`
+NODE_IP=$(ip -4 address show eth1 | grep 'inet' | sed 's/.*inet \([0-9\.]\+\).*/\1/')
+sudo sed -i "s/cluster_name: 'Test Cluster'/cluster_name: 'MyCassandraCluster'/g" /etc/cassandra/cassandra.yaml
+#Seed nodes are used to bootstrap new nodes into the cluster. Set the master as the seed node.
+#sudo sed -i "s/seeds: \"127.0.0.1\"/seeds: \"${IP}0\"/g" /etc/cassandra/cassandra.yaml
+sudo sed -i "s/seeds: \"127.0.0.1\"/seeds: \"10.20.30.100\"/g" /etc/cassandra/cassandra.yaml
+sudo sed -i "s/listen_address: localhost/listen_address:/g" /etc/cassandra/cassandra.yaml
+sudo sed -i "s/rpc_address: localhost/rpc_address: 0.0.0.0/g" /etc/cassandra/cassandra.yaml
+sudo sed -i "s/# broadcast_rpc_address: 1.2.3.4/broadcast_rpc_address: $NODE_IP/g" /etc/cassandra/cassandra.yaml
+# Start Cassandra Cluster
+sudo service cassandra start
+
+# post-provision of the Spark MASTER
 if [[ "$TYPE" == "MASTER" ]]; then
   # create $SPARK_HOME/conf/slaves file
   if [ -d $SPARK_HOME ]; then
@@ -119,10 +135,7 @@ if [[ "$TYPE" == "MASTER" ]]; then
       echo "$SLAVE_NAME >> $SPARK_HOME/conf/slaves"
       #ssh-copy-id -i ~/.ssh/id_rsa.pub -o "StrictHostKeyChecking=no" vagrant@"${SLAVE}-${i}"
     done
-  fi
-  # configure Cassandra (see http://docs.datastax.com/en/cassandra/3.x/cassandra/initialize/initSingleDS.html)
-  # and https://www.digitalocean.com/community/tutorials/how-to-use-the-apache-cassandra-one-click-application-image
-  
+  fi  
 fi
 
 echo $LINE

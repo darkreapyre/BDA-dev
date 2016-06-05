@@ -101,7 +101,7 @@ Vagrant.configure(2) do |config|
     #SHELL
 
     master.vm.provision "shell" do |p|
-      p.path = "scripts/box-provision.sh"
+      p.path = "scripts/provision.sh"
       p.args = "-t MASTER -n #{slaves} -a #{slavesIP} -m #{masterName} -s #{slaveName}"
     end
 
@@ -134,7 +134,7 @@ Vagrant.configure(2) do |config|
       #SHELL
 
       node.vm.provision "shell" do |p|
-        p.path = "scripts/box-provision.sh"
+        p.path = "scripts/provision.sh"
         p.args = "-t SLAVE -n #{slaves} -a #{slavesIP} -m #{masterName} -s #{slaveName}"
       end
     end

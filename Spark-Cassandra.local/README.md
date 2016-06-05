@@ -9,9 +9,11 @@ This is a Linux (Ubuntu) box deployed by vagrant including the following Data Sc
 - [RStudio Server] v0.99.491.
 - [Rstudio Shiny Server] v1.4.2.789 -- Intstall `ubuntu/trusty64`
 - [Java JDK 7] (1.7.0_91).
+- [Oracle Java JDK 8] (1.8.0_91).
 - [Scala] 2.10.
 - [TensorFlow] 0.8.0.
 - [Theano] 0.8.1.
+- [Datastax Distribution of Apache Cassandra] 3.5.
 
 It has been succesfully tested on both `OSX El Capitan` and `Windows 7` systems. __Note:__ When running on `Windows 7`, ensure you have __VirtualBox 4.3.34__ loaded. This environment does not work on version __5.x__ for Windows. 
 
@@ -191,6 +193,7 @@ Thanks to the following people for sharing their projects: [Adobe Research], [Da
 [Git]: https://git-scm.com/downloads
 [IPython-extensions]: https://github.com/ipython-contrib/IPython-extensions
 [Java JDK 7]: http://openjdk.java.net/projects/jdk7
+[Oracle Java JDK 8]: https://help.ubuntu.com/community/Java
 [Jupyter]: http://jupyter.org
 [LICENSE]: https://github.com/darkreapyre/Big-Data-Architectures/blob/master/Spark.local/LICENSE
 [Python]: https://www.python.org
@@ -210,4 +213,5 @@ Thanks to the following people for sharing their projects: [Adobe Research], [Da
 [GitHub Help]: https://help.github.com/articles/dealing-with-line-endings
 [TensorFlow]: https://www.tensorflow.org
 [Theano]: http://deeplearning.net/software/theano/
+[Datastax Distribution of Apache Cassandra]: http://docs.datastax.com/en/cassandra/3.x/cassandra/cassandraAbout.html
 [synced folder]: https://www.vagrantup.com/docs/synced-folders/
