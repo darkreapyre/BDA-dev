@@ -45,9 +45,9 @@ sudo su vagrant -c 'cat > /home/vagrant/.local/share/jupyter/kernels/scala/kerne
   ],
   "codemirror_mode": "scala",
   "env": {
-    "SPARK_OPTS": "--master=spark://master:7077 --packages=com.databricks:spark-csv_2.10:1.4.0 --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=trace",
+    "SPARK_OPTS": "--master=spark://master:7077 --packages=com.databricks:spark-csv_2.10:1.4.0,datastax:spark-cassandra-connector:1.4.4-s_2.10 --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=trace",
     "MAX_INTERPRETER_THREADS": "16",
-    "SPARK_CONFIGURATION": "spark.cores.max=4",
+    "SPARK_CONFIGURATION": "spark.cores.max=2",
     "CAPTURE_STANDARD_OUT": "true",
     "CAPTURE_STANDARD_ERR": "true",
     "SEND_EMPTY_OUTPUT": "false",

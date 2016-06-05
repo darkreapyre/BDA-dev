@@ -10,7 +10,7 @@ DRIVER_MEMORY="1536M"
 # ensure that always chmod go-wrx
 umask 0077
 
-DEFAULT_SUBMIT_ARGS="--packages com.databricks:spark-csv_2.10:1.4.0 --driver-memory $DRIVER_MEMORY --num-executors $NUM_EXECUTORS --executor-cores $EXECUTOR_CORES --executor-memory $EXECUTOR_MEMORY"
+DEFAULT_SUBMIT_ARGS="--packages com.databricks:spark-csv_2.10:1.4.0,datastax:spark-cassandra-connector:1.4.4-s_2.10 --driver-memory $DRIVER_MEMORY --num-executors $NUM_EXECUTORS --executor-cores $EXECUTOR_CORES --executor-memory $EXECUTOR_MEMORY"
 PYSPARK_SUBMIT_ARGS="--master $MASTER $DEFAULT_SUBMIT_ARGS"
 
 export PYSPARK_PYTHON=python
