@@ -12,7 +12,7 @@ masterName = "master"   # name of the master node (used in scripts/spark-env-sh)
 masterIP = "10.20.30.100"     # private IP of master node
 
 slaves = 1                    # number of slaves 
-slaveRAM = 2048               # RAM in MB
+slaveRAM = 4096               # RAM in MB
 slaveCPUs = 2                 # CPU cores
 slaveName = "slave"     # names of the slave nodes with a number appended
 slavesIP = "10.20.30.10"      # private IPs of slaves appending a number
