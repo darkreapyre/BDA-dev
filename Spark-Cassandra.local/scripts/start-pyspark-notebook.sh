@@ -11,9 +11,10 @@ DRIVER_MEMORY="1536M"
 umask 0077
 
 DEFAULT_SUBMIT_ARGS="--driver-memory $DRIVER_MEMORY --num-executors $NUM_EXECUTORS --executor-cores $EXECUTOR_CORES --executor-memory $EXECUTOR_MEMORY"
-SPARK_PACKAGES="com.databricks:spark-csv_2.10:1.4.0,datastax:spark-cassandra-connector:1.4.4-s_2.10,TargetHolding:pyspark-cassandra:0.3.5"
-CASSANDRA_HOST="spark.cassandra.connection.host=master"
-PYSPARK_SUBMIT_ARGS="--master $MASTER --packages $SPARK_PACKAGES --conf $CASSANDRA_HOST $DEFAULT_SUBMIT_ARGS"
+#SPARK_PACKAGES="com.databricks:spark-csv_2.10:1.4.0,datastax:spark-cassandra-connector:1.4.4-s_2.10,TargetHolding:pyspark-cassandra:0.3.5"
+SPARK_PACKAGES="com.databricks:spark-csv_2.10:1.4.0,datastax:spark-cassandra-connector:1.5.0-s_2.10"
+CASSANDRA_CONF="spark.cassandra.connection.host=master"
+PYSPARK_SUBMIT_ARGS="--master $MASTER --packages $SPARK_PACKAGES --conf $CASSANDRA_CONF $DEFAULT_SUBMIT_ARGS"
 
 export PYSPARK_PYTHON=python
 export PYSPARK_DRIVER_PYTHON=jupyter
