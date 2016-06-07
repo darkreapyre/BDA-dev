@@ -1,0 +1,14 @@
+{
+    "display_name": "Spark-DSE Cluster",
+    "language": "scala",
+    "argv": [
+        "spark-submit",
+        "--packages",
+        "datastax:spark-cassandra-connector:1.6.0-M2-s_2.10",
+        "/vagrant/apps/kernel-0.1.6.0-opensource-SNAPSHOT/lib/kernel-assembly-0.1.6.0-opensource-SNAPSHOT.jar",
+        "com.ibm.spark.SparkKernel",
+        "--profile",
+        "{connection_file}"
+     ],
+     "codemirror_mode": "scala"
+}

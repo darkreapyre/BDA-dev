@@ -35,7 +35,7 @@ echo "# Install Python Data Science Libraries"
 # Pyhton 2
 sudo apt-get -y install python-matplotlib python-numpy python-scipy python-pandas
 #These libraries don't seem to cause issues when loaded together
-sudo pip2 install Theano spark-sklearn networkx sympy keras
+sudo pip2 install Theano spark-sklearn networkx sympy keras 
 
 # Install troublesome libraries separately as these require different version of pandas and numpy
 #sudo pip2 install python-igraph #collection of network analysis tools
@@ -57,3 +57,7 @@ if [ "$SYSTEM" == "x86_64" ]; then
   sudo pip2 install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.8.0-cp27-none-linux_x86_64.whl
   sudo pip3 install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.8.0-cp34-cp34m-linux_x86_64.whl
 fi
+
+echo "# Install Python Libraries for Cassandra"
+sudo pip install cassandra-driver
+sudo pip3 install cassandra-driver
