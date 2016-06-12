@@ -1,8 +1,8 @@
 # Initialization Template
 # Save as init.yml when completed
 # Total number of Virtual Machines to deploy (inluding the Master)
-# e.g. Total: 5
-Total: 5
+# e.g. Total: 9
+Total: 9
 
 # vSphere username
 # e.g. Username: "administrator@vsphere.local"
@@ -10,7 +10,7 @@ Username: "administrator@vsphere.local"
 
 # vSphere password
 # e.g. Password: "Password"
-Password: "Fuck_Y0u!"
+Password: "Dell:123"
 
 # vSphere Pool to assign the virtual machines
 # e.g. Pool: "Linux"
@@ -22,11 +22,11 @@ Cluster: "VRTX"
 
 # Template to clone the virtual machines from
 # e.g. Template: "Temaplates/ubuntu.14"
-Template: "Production/vivid-tmp"
+Template: "Production/ubuntu-tmp"
 
 # vShere or vCenter Host name or IP address
 # e.g. Host: "esx01.vsphere.local"
-Host: "vcenter.synapse.local"
+Host: "vcenter.chakra.local"
 
 # Master Username
 Master_User: "admin"
@@ -47,7 +47,7 @@ Java_Version: "openjdk-7-jdk"
 Maven_Version: "3.3.3"
 
 # Scala Version
-Scala_Version: "2.10.6"
+Scala_Version: "2.10.4"
 
 # TensorFlow Version
 TFlow_Version: "0.8.0"

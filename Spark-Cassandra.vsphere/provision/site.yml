@@ -36,6 +36,12 @@
                   mode=0644
       become: yes
       become_user: "{{ cluster_user }}"
+
+    - name: Build hosts file on all servers
+      lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
+      when: hostvars[item].ansible_default_ipv4.address is defined
+      with_items: groups['all']
+      sudo: yes
     
 - hosts: master
   tasks:
@@ -126,7 +132,7 @@
       become: yes
       become_user: "{{ cluster_user }}"
 
-- name: Install base confiuration on all Spark servers
+- name: Install base confiuration on all Spark/Hadoop servers
   hosts: all:!cassandra
   remote_user: vagrant
   sudo: yes
@@ -134,7 +140,7 @@
   roles:
     - common
 
-- name: Install hadoop on all Spark servers
+- name: Install hadoop on all Spark/Hadoop servers
   hosts: all:!cassandra
   remote_user: vagrant
   sudo: yes
@@ -142,7 +148,7 @@
   roles:
     - hadoop
 
-- name: Install spark on all Spark servers
+- name: Install spark on all Spark/Hadoop servers
   hosts: all:!cassandra
   remote_user: vagrant
   sudo: yes
@@ -150,15 +156,15 @@
   roles:
     - spark
 
-- name: Configure manual master configuration to test
+- name: Install and Configure all Cassandra servers
+  hosts: cassandra
+  remote_user: vagrant
+  sudo: yes
+
+- name: Configure Data Science Libraries on the Spark Master
   hosts: master
   remote_user: vagrant
   sudo: yes
   
   roles:
     - dsbox
-
-- name: Configure Cassandra servers
-  hosts: cassandra
-  remote_user: vagrant
-  sudo: yes
