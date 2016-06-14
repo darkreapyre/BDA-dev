@@ -67,8 +67,7 @@ Vagrant.configure("2") do |config|
             "maven_version" => Maven_Version,
             "java_version" => Java_Version,
             "java_home" => "/usr/lib/jvm/java-7-openjdk-amd64",
-            "cassandra_version" => Cassandra_Version,
-            "cassandra_cluster" => 'MyCassandraCluster'
+            "cassandra_version" => Cassandra_Version
           }
           ansible.limit = "all"
           ansible.verbose = "v"

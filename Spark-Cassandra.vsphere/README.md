@@ -1,4 +1,4 @@
-# Installing a Spark Cluster on VMware vSphere
+# Installing a Spark and Cassandra Cluster on VMware vSphere
 __WORK IN PROGRESS!__  
 ## Introduction
 This document details the process of setting up an admin node with `Vagrant` and connecting to a __Vmware vSphere 6.0__ environment to configure a virtualized Big Data ecosystem for Data Science purposes. It further details how to leverage the admin node to build out the environment using __ansible playbooks__ with the following:

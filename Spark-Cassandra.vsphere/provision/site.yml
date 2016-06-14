@@ -156,10 +156,13 @@
   roles:
     - spark
 
-- name: Install and Configure all Cassandra servers
+- name: Install Cassandra servers
   hosts: cassandra
   remote_user: vagrant
   sudo: yes
+
+  roles:
+    - cassandra_install
 
 - name: Configure Data Science Libraries on the Spark Master
   hosts: master
@@ -168,3 +171,11 @@
   
   roles:
     - dsbox
+
+- name: Configure Cassandra Cluster
+  hosts: cassandra
+  remote_user: vagrant
+  sudo: yes
+
+  roles:
+    - cassandra_cluster
