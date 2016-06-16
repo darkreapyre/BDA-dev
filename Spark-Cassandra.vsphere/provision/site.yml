@@ -1,11 +1,13 @@
 ---
-# -------------------------------------------------------------------------
-# Adding Python 2.7 for Ubuntu 16.04
-- name: Bootstrap Python 2
-  gather_facts: no
-  tasks:
-  - raw: sudo apt-get update -qq && sudo apt-get install -qq python2.7
-# -------------------------------------------------------------------------
+# Adding Python 2.7 as Ubuntu 16.04 default is Python 3
+- hosts: all
+  gather_facts: false
+  sudo: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python2.7
+
+  roles:
+    - pre-ansible
 
 - hosts: all
   tasks:

@@ -32,8 +32,7 @@ groups = {
   "masters" => [],
   "slaves" => [],
   "cassandra" => [],
-  "all_groups:children" => ["masters", "slaves", "cassandra"],
-  "all_groups:vars" => {"ansible_python_interpreter:" => "/usr/bin/python2.7"}
+  "all_groups:children" => ["masters", "slaves", "cassandra"]
 }
 
 Vagrant.configure("2") do |config|
