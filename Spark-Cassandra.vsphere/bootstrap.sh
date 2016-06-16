@@ -7,9 +7,11 @@ echo "Starting bootstrap.sh"
 # get the latest repo
 #sudo rpm -Uvh https://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm <-- Issues
 #sudo rpm -Uvh https://linuxlib.us.dell.com/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm <-- Issues
-sudo yum -y install epel-release
+
+#sudo yum -y install epel-release <--- Issues as of 6/15/16
 sudo yum -y install kernel-devel kernel-headers dkms 
 sudo yum -y groupinstall "Development Tools"
+sudo yum -y install epel-release #<--- adding later after "Development Tools"
 sudo yum -y update
 
 # Install Vitualbox
@@ -19,7 +21,7 @@ sudo yum -y update
 # Install Virtualbox
 #yum install VirtualBox-4.3
 
-# Rebuild the dependencies
+# Rebuild the dependencie
 #/usr/lib/virtualbox/vboxdrv.sh setup
 
 # Add the user to the virtual box user group
@@ -27,7 +29,7 @@ sudo yum -y update
 #usermod -a -G vboxusers vagrant
 
 # Install Vagrant (ADD FULL PATH THROUGH WGET)
-sudo rpm -Uvh https://releases.hashicorp.com/vagrant/1.8.1/vagrant_1.8.1_x86_64.rpm
+sudo rpm -Uvh https://releases.hashicorp.com/vagrant/1.8.4/vagrant_1.8.4_x86_64.rpm
 vagrant plugin install vagrant-vsphere
 vagrant plugin install vagrant-address
 
