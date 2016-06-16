@@ -8,10 +8,9 @@ echo "Starting bootstrap.sh"
 #sudo rpm -Uvh https://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm <-- Issues
 #sudo rpm -Uvh https://linuxlib.us.dell.com/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm <-- Issues
 
-#sudo yum -y install epel-release <--- Issues as of 6/15/16
+sudo yum -y install epel-release
 sudo yum -y install kernel-devel kernel-headers dkms 
 sudo yum -y groupinstall "Development Tools"
-sudo yum -y install epel-release #<--- adding later after "Development Tools"
 sudo yum -y update
 
 # Install Vitualbox
