@@ -43,8 +43,10 @@ Vagrant.configure("2") do |config|
     if i == 1
       name = "master"
       groups["masters"] << name
-    elsif i >= 7
-      name = "node-#{i - 6}"
+#    elsif i >= 7
+    elsif i >= 3
+#      name = "node-#{i - 6}"
+      name = "node-#{i - 2}"     
       groups["cassandra"] << name
     else
       name = "slave-#{i - 1}"

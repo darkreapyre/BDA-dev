@@ -26,9 +26,9 @@ The following are the basic components needed to start.
 
 ### Create an Ubuntu Template  
 In order to leverage the `systemd` service funcitonality within Ubuntu, the Ubuntu Template is based on Ubuntu 15.04 (Vivid Vervet). Creating the template for Vmware is exactly the same as creating a Vagrant "box". Therefore, the following is [based on](https://blog.engineyard.com/2014/building-a-vagrant-box) that process. After creating the *vivid-tmp* virtual machine, power it up, login and perform the following:  
-- Install VMware Tools
+- Install VMware Tools. As a good practice it is suggested to add some of the basic tools to the template, even if these are part of the overall deployment process later.
 ```sh
-$ sudo apt-get install open-vm-tools
+$ sudo apt-get install open-vm-tools git zip unzip wget curl acl
 ```
 - Configure the `root` and `vagrant` users
 ```sh
@@ -50,7 +50,8 @@ $ wget --no-check-certificate https://raw.github.com/mitchellh/vagrant/master/ke
 $ chmod 0600 /home/vagrant/.ssh/authorized_keys
 $ chown -R vagrant /home/vagrant/.ssh
 ```
-- Install and Configure OpenSSH Server. As a good practice it is suggested to add some of the basic tools to the template, even if these are part of the overall deployment process later.
+- Install and Configure OpenSSH Server (If not installed during intial Ubuntu installation)
+.
 ```sh
 $ sudo apt-get -y install openssh-server git zip unzip curl wget acl
 ```
