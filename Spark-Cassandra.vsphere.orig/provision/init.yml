@@ -43,7 +43,7 @@ Java_Version: "openjdk-7-jdk"
 Maven_Version: "3.3.3"
 
 # Scala Version
-Scala_Version: "2.10.4"
+Scala_Version: "2.10.5"
 
 # TensorFlow Version
 TFlow_Version: "0.8.0"

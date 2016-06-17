@@ -34,10 +34,8 @@
                   owner={{ cluster_user }}
                   group={{ cluster_user }}
                   mode=0644
-      sudo: yes
-# Issues with Permission on temporary files
-#      become: yes
-#      become_user: "{{ cluster_user }}"
+      become: yes
+      become_user: "{{ cluster_user }}"
 
     - name: Build hosts file on all servers
       lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
