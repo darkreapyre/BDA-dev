@@ -56,8 +56,7 @@ Vagrant.configure("2") do |config|
         config.vm.provision :ansible do |ansible|
           ansible.playbook = "site.yml"
           ansible.groups = groups
-          ansible.extra_vars = {
-            
+          ansible.extra_vars = {            
             "cluster_user" => Master_User,
             "cluster_password" => Master_Password,
             "hadoop_version" => Hadoop_Version,

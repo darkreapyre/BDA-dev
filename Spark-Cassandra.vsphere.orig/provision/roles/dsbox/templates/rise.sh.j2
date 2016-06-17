@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+echo "# install RISE"
+
+RISE_GIT=https://github.com/damianavila/RISE.git
+APPS_DIR=/home/{{ cluster_user }}/apps
+RISE_HOME=$APPS_DIR/rise
+
+if ! [ -d $RISE_HOME ]; then
+  sudo git clone $RISE_GIT $RISE_HOME
+fi
+cd $RISE_HOME
+
+sudo su {{ cluster_user }} -c "python setup.py install"

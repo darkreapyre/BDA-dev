@@ -1,15 +1,4 @@
 ---
-# Adding Python 2.7 as Ubuntu 16.04 default is Python 3
-- hosts: all
-  gather_facts: false
-  sudo: yes
-  vars:
-    ansible_python_interpreter: /usr/bin/python2.7
-
-  roles:
-    - pre-ansible
-
-# Begin Sparl/Cassandra Playbook
 - hosts: all
   tasks:
     - name: Create Admins group
