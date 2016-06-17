@@ -1,9 +1,21 @@
 ---
+- name: Add Oracle Java Repository
+  shell: add-apt-repository -y ppa:webupd8team/java
+
 - name: Update apt cache
   apt: update-cache=yes cache_valid_time=86400
 
 - name: Update all packages
   apt: upgrade=dist
+
+- name: Prepare for Java 8 Installation
+  shell: echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+
+- name: Install Java8
+  apt: pkg={{ item }} state=installed update-cache=yes
+  with_items:
+    - oracle-java8-installer
+    - oracle-java8-set-default
 
 - name: Install packages
   apt: pkg={{ item }} state=latest
@@ -18,9 +30,8 @@
     - python-dev
     - python3-pip
     - python3-dev
-#    - libzmq3 #<- Issues on Ubuntu 16.04
-#    - libzmq3-dev
-    - zeromq #<-- Replacing the above two packages with Ubuntu 16.04 version
+#    - libzmq3 <- Doesn't exist on Ubuntu 16.04
+    - libzmq3-dev
     - python-matplotlib
     - python-numpy
     - python-scipy
@@ -32,7 +43,7 @@
     - python-nose
     - g++
     - libopenblas-dev
-    - "{{ java_version }}"
+#    - "{{ java_version }}" <-- Doesn't exist on Ubuntu 16.04
     - libjansi-java
 #  ignore_errors: yes
 

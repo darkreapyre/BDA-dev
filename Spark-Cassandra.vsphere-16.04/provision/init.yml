@@ -12,10 +12,6 @@ Username: "administrator@vsphere.local"
 # e.g. Password: "Password"
 Password: "Dell:123"
 
-# vSphere Pool to assign the virtual machines
-# e.g. Pool: "Linux"
-Pool: "BigData"
-
 # vSphere Cluster
 # e.g. Cluster: "Site A"
 Cluster: "VRTX"
@@ -40,14 +36,14 @@ Hadoop_Version: "2.6.2"
 # Spark Version
 Spark_Version: "1.5.2"
 
-# Java File
-Java_Version: "openjdk-7-jdk"
+# Java File <-- Removing for Ubuntu 16.04
+#Java_Version: "openjdk-7-jdk"
 
 # Maven Version
 Maven_Version: "3.3.3"
 
 # Scala Version
-Scala_Version: "2.10.4"
+Scala_Version: "2.10.5" #<-- For Spark-Cassandra-Connector development
 
 # TensorFlow Version
 TFlow_Version: "0.8.0"

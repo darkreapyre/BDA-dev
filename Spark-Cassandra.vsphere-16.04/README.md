@@ -22,39 +22,11 @@ The following are the basic components needed to start.
   - _vagrant-vsphere_  
     __Note:__ _vagrant-vsphere_ requires the that [Nokogiri](http://www.nokogiri.org/tutorials/installing_nokogiri.html) be installed.
 4. [VMware Photon](https://vmware.github.io/photon/assets/files/getting_started_with_photon_on_vsphere.pdf)
-5. [Ubuntu Vivid Vervet](http://releases.ubuntu.com/vivid)
-
-### Create a Photon Template  
-Follow the __[Vmware Photon](https://vmware.github.io/photon/assets/files/getting_started_with_photon_on_vsphere.pdf)__ Getting Started Guide to create the *photon-tmp* Virtual Machine. After the Template has been created, power it up, login and perform the following:  
-- Create the *vagrant* user.
-  ```sh
-  $ useradd vagrant
-  ```
-- Configure the *vagrant* user password as *vagrant*.
-  ```sh
-  $ passwd vagrant
-  ```
-- Use `visudo` to add the *vagrant* user as a __sudoer__, by adding the following line.
-  ```sh
-  vagrant ALL=(ALL) NOPASSWD:ALL
-  ```
-- Add the __SSH Key__ to the *vagrant* user account.
-  ```sh
-  $ mkdir -p /home/vagrant/.ssh
-  $ wget --no-check-certificate https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub -O /home/vagrant/.ssh/authorized_keys
-  $ chmod 0700 /home/vagrant/.ssh
-  $ chmod 0600 /home/vagrant/.ssh/authorized_keys
-  $ chown -R vagrant /home/vagrant/.ssh
-  ```
-- Shut down thesh Virtual Machine.
-  ```sh
-  $ shutdown now
-  ```
-- Using the vSphere Web Client, convert the *photon-tmp* Virtual Machine to a Template.
+5. [Ubuntu 16.04 (Xenial Xerus)](http://releases.ubuntu.com/16.04/)
 
 ### Create an Ubuntu Template  
 In order to leverage the `systemd` service funcitonality within Ubuntu, the Ubuntu Template is based on Ubuntu 15.04 (Vivid Vervet). Creating the template for Vmware is exactly the same as creating a Vagrant "box". Therefore, the following is [based on](https://blog.engineyard.com/2014/building-a-vagrant-box) that process. After creating the *vivid-tmp* virtual machine, power it up, login and perform the following:  
-- Install VMware Tools
+- Install VMware Tools (if necessary as Ubuntu 16.04 is preloaded)
 ```sh
 $ sudo apt-get install open-vm-tools
 ```
@@ -74,8 +46,9 @@ $ sudo shutdown -r now
 - Install the Vagrant SSH Key
 ```sh
 $ mkdir -p /home/vagrant/.ssh
+$ wget --no-check-certificate https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub -O /home/vagrant/.ssh/authorized_keys
 $ chmod 0700 /home/vagrant/.ssh
-/$ chmod 0600 /home/vagrant/.ssh/authorized_keys
+$ chmod 0600 /home/vagrant/.ssh/authorized_keys
 $ chown -R vagrant /home/vagrant/.ssh
 ```
 - Install and Configure OpenSSH Server. As a good practice it is suggested to add some of the basic tools to the template, even if these are part of the overall deployment process later.
@@ -144,3 +117,30 @@ $ touch Vagrantfile
 ```sh
 $ vagrant up --provider=vsphere
 ```
+# Appendix A: Create a Photon Template  
+Follow the __[Vmware Photon](https://vmware.github.io/photon/assets/files/getting_started_with_photon_on_vsphere.pdf)__ Getting Started Guide to create the *photon-tmp* Virtual Machine. After the Template has been created, power it up, login and perform the following:  
+- Create the *vagrant* user.
+  ```sh
+  $ useradd vagrant
+  ```
+- Configure the *vagrant* user password as *vagrant*.
+  ```sh
+  $ passwd vagrant
+  ```
+- Use `visudo` to add the *vagrant* user as a __sudoer__, by adding the following line.
+  ```sh
+  vagrant ALL=(ALL) NOPASSWD:ALL
+  ```
+- Add the __SSH Key__ to the *vagrant* user account.
+  ```sh
+  $ mkdir -p /home/vagrant/.ssh
+  $ wget --no-check-certificate https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub -O /home/vagrant/.ssh/authorized_keys
+  $ chmod 0700 /home/vagrant/.ssh
+  $ chmod 0600 /home/vagrant/.ssh/authorized_keys
+  $ chown -R vagrant /home/vagrant/.ssh
+  ```
+- Shut down thesh Virtual Machine.
+  ```sh
+  $ shutdown now
+  ```
+- Using the vSphere Web Client, convert the *photon-tmp* Virtual Machine to a Template.

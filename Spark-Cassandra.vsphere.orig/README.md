@@ -22,7 +22,7 @@ The following are the basic components needed to start.
   - _vagrant-vsphere_  
     __Note:__ _vagrant-vsphere_ requires the that [Nokogiri](http://www.nokogiri.org/tutorials/installing_nokogiri.html) be installed.
 4. [VMware Photon](https://vmware.github.io/photon/assets/files/getting_started_with_photon_on_vsphere.pdf)
-5. [Ubuntu Vivid Vervet](http://releases.ubuntu.com/vivid)
+5. Ubuntu 15.04
 
 ### Create a Photon Template  
 Follow the __[Vmware Photon](https://vmware.github.io/photon/assets/files/getting_started_with_photon_on_vsphere.pdf)__ Getting Started Guide to create the *photon-tmp* Virtual Machine. After the Template has been created, power it up, login and perform the following:  
