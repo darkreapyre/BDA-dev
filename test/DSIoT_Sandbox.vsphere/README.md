@@ -63,6 +63,7 @@ AuthorizedKeysFile %h/.ssh/authorized_keys
 ```sh
 $ sudo service ssh restart
 ```
+- Remove the `vivi-tmp` entry in `/etc/hosts`
 - Shut down the server and convert it to a template
 ```sh
 $ sudo shutdown now

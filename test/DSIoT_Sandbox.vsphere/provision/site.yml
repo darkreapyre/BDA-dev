@@ -99,7 +99,7 @@
       become: yes
       become_user: "{{ cluster_user }}"
 
-- hosts: slaves:cassandra
+- hosts: slaves
   tasks:
     - name: Distribute ssh keys
       copy: src=sshkeys/{{ item }} dest=/home/{{ cluster_user }}/.ssh/{{ item }}
@@ -137,7 +137,7 @@
       become_user: "{{ cluster_user }}"
 
 - name: Install base confiuration on all Spark/Hadoop servers
-  hosts: all:!cassandra
+  hosts: all
   remote_user: vagrant
   sudo: yes
 
@@ -145,7 +145,7 @@
     - common
 
 - name: Install hadoop on all Spark/Hadoop servers
-  hosts: all:!cassandra
+  hosts: all
   remote_user: vagrant
   sudo: yes
   
@@ -153,7 +153,7 @@
     - hadoop
 
 - name: Install spark on all Spark/Hadoop servers
-  hosts: all:!cassandra
+  hosts: all
   remote_user: vagrant
   sudo: yes
   
@@ -161,7 +161,7 @@
     - spark
 
 - name: Install Cassandra servers
-  hosts: cassandra
+  hosts: all
   remote_user: vagrant
   sudo: yes
 
@@ -177,7 +177,7 @@
     - dsbox
 
 #- name: Configure Cassandra Cluster
-#  hosts: cassandra
+#  hosts: all
 #  remote_user: vagrant
 #  sudo: yes
 #
