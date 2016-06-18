@@ -1,0 +1,25 @@
+---
+- name: Create the hadoop masters file
+  template: src=hadoop-masters.j2 dest=/opt/hadoop/etc/hadoop/masters owner={{ cluster_user }} group={{ cluster_user }}
+
+- name: Create the hadoop slaves file
+  template: src=hadoop-slaves.j2 dest=/opt/hadoop/etc/hadoop/slaves owner={{ cluster_user }} group={{ cluster_user }}
+
+- name: Create hdfs namenode data directory
+  file: path=/hdfs/namenode state=directory owner={{ cluster_user }} group={{ cluster_user }}
+
+- name: Format hdfs namenode data directory
+  command: '/opt/hadoop/bin/hdfs namenode -format'
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Create hdfs namenode systemd service file
+  template: src={{ item }}.j2 dest=/lib/systemd/system/{{ item }} mode=0644 owner=root group=root
+  with_items:
+    - hdfs-namenode.service
+
+- name: Reload systemd
+  command: systemctl daemon-reload
+
+- name: Start hdfs namenode
+  service: name=hdfs-namenode state=started enabled=yes
