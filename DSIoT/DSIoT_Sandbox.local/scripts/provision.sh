@@ -129,12 +129,12 @@ done
 # https://www.digitalocean.com/community/tutorials/how-to-use-the-apache-cassandra-one-click-application-image
 # and https://github.com/danielrmeyer/cassandra-analytics/blob/c337dfe726e7846f51cdb303741d78284da8a8f2/provisioning/setup_cassandra.sh
 #NODE_IP = `hostname -I | cut -d' ' -f2`
-if [[ "$TYPE" == "NODE" && $Q > 1 ]]; then
+if [[ "$TYPE" == "NODE" && "$Q" > 1 ]]; then
   NODE_IP=$(ip -4 address show eth1 | grep 'inet' | sed 's/.*inet \([0-9\.]\+\).*/\1/')
   sudo sed -i "s/cluster_name: 'Test Cluster'/cluster_name: 'MyCassandraCluster'/g" /etc/cassandra/cassandra.yaml
   #Seed nodes are used to bootstrap new nodes into the cluster. Set the master as the seed node.
   #sudo sed -i "s/seeds: \"127.0.0.1\"/seeds: \"${IP}0\"/g" /etc/cassandra/cassandra.yaml
-  sudo sed -i "s/seeds: \"127.0.0.1\"/seeds: \"10.20.30.100\"/g" /etc/cassandra/cassandra.yaml
+  sudo sed -i "s/seeds: \"127.0.0.1\"/seeds: \"10.20.30.111\"/g" /etc/cassandra/cassandra.yaml
   sudo sed -i "s/listen_address: localhost/listen_address:/g" /etc/cassandra/cassandra.yaml
   sudo sed -i "s/rpc_address: localhost/rpc_address: 0.0.0.0/g" /etc/cassandra/cassandra.yaml
   sudo sed -i "s/# broadcast_rpc_address: 1.2.3.4/broadcast_rpc_address: $NODE_IP/g" /etc/cassandra/cassandra.yaml
