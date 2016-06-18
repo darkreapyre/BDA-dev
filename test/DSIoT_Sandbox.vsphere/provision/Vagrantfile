@@ -31,8 +31,7 @@ Cassandra_Version = @cmd['Cassandra_Version']
 groups = {
   "masters" => [],
   "slaves" => [],
-  "cassandra" => [],
-  "all_groups:children" => ["masters", "slaves", "cassandra"]
+  "all_groups:children" => ["masters", "slaves"]
 }
 
 Vagrant.configure("2") do |config|
