@@ -33,6 +33,7 @@
     - libopenblas-dev
     - "{{ java_version }}"
     - libjansi-java
+    - python-software-properties
 
 - name: Install additional Python 2 libraries
   pip: name={{ item }}
