@@ -36,6 +36,10 @@
                   mode=0644
       become: yes
       become_user: "{{ cluster_user }}"
+    
+    - name: Remove localhost IP address
+      lineinfile: dest=/etc/hosts regexp='127.0.1.1' state=absent
+      sudo: yes
 
     - name: Build hosts file on all servers
       lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
@@ -172,10 +176,10 @@
   roles:
     - dsbox
 
-- name: Configure Cassandra Cluster
-  hosts: cassandra
-  remote_user: vagrant
-  sudo: yes
-
-  roles:
-    - cassandra_cluster
+#- name: Configure Cassandra Cluster
+#  hosts: cassandra
+#  remote_user: vagrant
+#  sudo: yes
+#
+#  roles:
+#    - cassandra_cluster

@@ -3,8 +3,9 @@
 
 # ------------------------- CONFIG PARAMS ----------------------------
 provider = "virtualbox"       # VM provider
-boxMaster = "ubuntu/trusty64" # system to be installed on master
-boxSlave = "ubuntu/trusty64"  # system to be installed on slaves
+boxMaster = "ubuntu/trusty64" # system to be installed on spark master
+boxSlave = "ubuntu/trusty64"  # system to be installed on spark slaves
+boxNode = "ubuntu/trusty64"   # system to be installed on cassandra nodes
 
 masterRAM = 4096              # RAM in MB
 masterCPUs = 2                # CPU cores
@@ -19,7 +20,7 @@ slavesIP = "10.20.30.10"      # private IPs of slaves appending a number
 
 nodes = 1                     # number of Cassandra nodes
 nodeRAM = 4096                # RAM in MB
-nodeCPU = 2                   # CPU cores
+nodeCPUs = 2                   # CPU cores
 nodeName = "node"       # names of the Cassandra nodes with a number appended
 nodesIP = "10.20.30.11"      # private IPs of the nodes appending the number
 
@@ -68,18 +69,18 @@ Vagrant.configure(2) do |config|
 
   # config each worker node (slaves)
   (1..slaves).each do |i|
-    config.vm.define "#{slaveName}-#{i}" do |node|
-      node.vm.box = boxSlave
-      node.vm.hostname = "#{slaveName}-#{i}" 
-      node.vm.network "private_network", ip: "#{slavesIP}#{i}"
-      node.vm.synced_folder ".", "/vagrant"
-      node.vm.provider provider do |vb|
+    config.vm.define "#{slaveName}-#{i}" do |slave|
+      slave.vm.box = boxSlave
+      slave.vm.hostname = "#{slaveName}-#{i}" 
+      slave.vm.network "private_network", ip: "#{slavesIP}#{i}"
+      slave.vm.synced_folder ".", "/vagrant"
+      slave.vm.provider provider do |vb|
         vb.memory = slaveRAM
         vb.cpus = slaveCPUs 
-        vb.name = node.vm.hostname.to_s
+        vb.name = slave.vm.hostname.to_s
       end
 
-      node.vm.provision "shell" do |p|
+      slave.vm.provision "shell" do |p|
         p.path = "scripts/provision.sh"
         p.args = "-t SLAVE -n #{slaves} -a #{slavesIP} -m #{masterName} -s #{slaveName} -b #{nodesIP} -c #{nodeName} -q #{nodes}"
       end

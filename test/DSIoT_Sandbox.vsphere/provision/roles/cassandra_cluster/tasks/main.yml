@@ -3,7 +3,7 @@
   service: name=cassandra enabled=yes state=stopped
 
 - name: Clean default configuration
-  shell: sudo rm -rf /var/lib/cassandra/data/system*
+  shell: sudo rm -rf /var/lib/cassandra/data/system/*
 
 #Option 1: netaddr package
 #broadcast_rpc_address: {{ ipv4_host | ipaddr('address') }}

@@ -37,9 +37,6 @@
   become: yes
   become_user: "{{ cluster_user }}"
 
-- name: Remove localhost IP address
-  lineinfile: dest=/etc/hosts regexp='127.0.1.1' state=absent
-
 - name: Create HDFS tmp
   file: path=/hdfs/tmp state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=750
 
