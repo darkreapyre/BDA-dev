@@ -6,13 +6,16 @@
 # -a: main IP address (i.e. 10.20.30.10_) used for master (10.20.30.100) & slaves (10.20.30.10[1-9])
 # -m: name for the master (i.e. "master")
 # -s: name for the slaves (i.e. "slave")
+# -b: start IP address for cassandra nodes (10.20.30.11[1-9])
+# -c: name of the cassandra nodes (i.e. "node")
+# -q: # of nodes <1-9> 
 
-usage() { echo "Usage: $0 [-t <MASTER|SLAVE>] [-n <1-9>] [-a <ip_address>] [-m <string>] [-s <string>]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-t <MASTER|SLAVE|NODE>] [-n <1-9>] [-a <ip_address>] [-m <string>] [-s <string>] [-b <ip_address>] [-c <string>] [-q <1-9>]" 1>&2; exit 1; }
 
-while getopts ":t:n:a:m:s:b:c:" option; do
+while getopts ":t:n:a:m:s:b:c:q:" option; do
   case $option in
     t) TYPE=$OPTARG
-       if [[ "$TYPE" != "MASTER" && "$TYPE" != "SLAVE" ]]; then
+       if [[ "$TYPE" != "MASTER" && "$TYPE" != "SLAVE" && "$TYPE" != "NODE"]]; then
          usage
        fi ;;
     n) N=$OPTARG
@@ -23,20 +26,23 @@ while getopts ":t:n:a:m:s:b:c:" option; do
        fi ;;
     m) MASTER=$OPTARG ;;
     s) SLAVE=$OPTARG ;;
-    b) NIP=$OPTARG
-       if ! [[ $NIP =~ ]]
-    c) 
+    b) nIP=$OPTARG
+       if ! [[ $NIP =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+         usage
+      fi ;;
+    c) NODE=$OPTARG ;;
+    q) Q=$OPTARG ;;
     *) usage ;;
   esac
 done
 
 shift $((OPTIND-1))
 
-if [ -z "$TYPE" ] || [ -z "$N" ] || [ -z "$IP" ] || [ -z "$MASTER" ] || [ -z "$SLAVE" ]; then
+if [ -z "$TYPE" ] || [ -z "$N" ] || [ -z "$IP" ] || [ -z "$MASTER" ] || [ -z "$SLAVE" ] || [ -z "$nIP" ] || [ -z "$NODE" ] || [ -z "$Q" ]; then
   usage
 fi
 
-#echo "TYPE=$TYPE - N=$N - IP=$IP - MASTER=$MASTER - SLAVE=$SLAVE"
+#echo "TYPE=$TYPE - N=$N - IP=$IP - MASTER=$MASTER - SLAVE=$SLAVE - IP=$nIP - NODE=$NODE - Q=$Q"
 
 STARTTIME=$(date +%s)
 LINE="····································································································"
@@ -44,12 +50,16 @@ echo $LINE
 echo "START provisioning $(date +'%Y/%m/%d %H:%M:%S')"
 echo $LINE
 
-# create /etc/hosts with master & slaves
+# create /etc/hosts with master, slaves and nodes
 sudo sh -c "echo 127.0.0.1 localhost > /etc/hosts"
 sudo sh -c "echo ${IP}0 $MASTER >> /etc/hosts"
 for i in $(seq 1 $N); do
   SLAVE_NAME="${SLAVE}-${i}"
   sudo sh -c "echo ${IP}${i} $SLAVE_NAME >> /etc/hosts"
+done
+for i in $(seq 1 $Q); do
+  NODE_NAME="${NODE}-${i}"
+  sudo sh -c "echo ${nIP}${i} $NODE_NAME >> /etc/hosts"
 done
 
 # scripts
@@ -91,8 +101,11 @@ else
   sudo -u vagrant sh -c "cat $SSH_KEYS_PATH/authorized_keys >> /home/vagrant/.ssh/authorized_keys"
   #su vagrant -c "chmod 600 /home/vagrant/.ssh/authorized_keys"
   sudo -u vagrant sh -c "chmod 600 /home/vagrant/.ssh/authorized_keys"
-
-  SCRIPTS="$SCRIPTS 99-clean.sh"
+  if [[ "$TYPE" == "SLAVE" ]]; then
+    SCRIPTS="$SCRIPTS 99-clean.sh"
+  else
+    SCRIPTS="00-init.sh 21-cassandra.sh 99-clean.sh"
+  fi
 fi
 
 # run scripts
@@ -111,21 +124,23 @@ for SCRIPT in $SCRIPTS; do
   fi
 done
 
-# Initialize cassandra muli-node cluster (single data center)
+# Initialize cassandra muli-node cluster (single data center) if there is more then one cassandra node
 # configure Cassandra (see http://docs.datastax.com/en/cassandra/3.x/cassandra/initialize/initSingleDS.html); 
 # https://www.digitalocean.com/community/tutorials/how-to-use-the-apache-cassandra-one-click-application-image
 # and https://github.com/danielrmeyer/cassandra-analytics/blob/c337dfe726e7846f51cdb303741d78284da8a8f2/provisioning/setup_cassandra.sh
 #NODE_IP = `hostname -I | cut -d' ' -f2`
-NODE_IP=$(ip -4 address show eth1 | grep 'inet' | sed 's/.*inet \([0-9\.]\+\).*/\1/')
-sudo sed -i "s/cluster_name: 'Test Cluster'/cluster_name: 'MyCassandraCluster'/g" /etc/cassandra/cassandra.yaml
-#Seed nodes are used to bootstrap new nodes into the cluster. Set the master as the seed node.
-#sudo sed -i "s/seeds: \"127.0.0.1\"/seeds: \"${IP}0\"/g" /etc/cassandra/cassandra.yaml
-sudo sed -i "s/seeds: \"127.0.0.1\"/seeds: \"10.20.30.100\"/g" /etc/cassandra/cassandra.yaml
-sudo sed -i "s/listen_address: localhost/listen_address:/g" /etc/cassandra/cassandra.yaml
-sudo sed -i "s/rpc_address: localhost/rpc_address: 0.0.0.0/g" /etc/cassandra/cassandra.yaml
-sudo sed -i "s/# broadcast_rpc_address: 1.2.3.4/broadcast_rpc_address: $NODE_IP/g" /etc/cassandra/cassandra.yaml
-# Start Cassandra Cluster
-sudo service cassandra start
+if [[ "$TYPE" == "NODE" && $Q > 1 ]]; then
+  NODE_IP=$(ip -4 address show eth1 | grep 'inet' | sed 's/.*inet \([0-9\.]\+\).*/\1/')
+  sudo sed -i "s/cluster_name: 'Test Cluster'/cluster_name: 'MyCassandraCluster'/g" /etc/cassandra/cassandra.yaml
+  #Seed nodes are used to bootstrap new nodes into the cluster. Set the master as the seed node.
+  #sudo sed -i "s/seeds: \"127.0.0.1\"/seeds: \"${IP}0\"/g" /etc/cassandra/cassandra.yaml
+  sudo sed -i "s/seeds: \"127.0.0.1\"/seeds: \"10.20.30.100\"/g" /etc/cassandra/cassandra.yaml
+  sudo sed -i "s/listen_address: localhost/listen_address:/g" /etc/cassandra/cassandra.yaml
+  sudo sed -i "s/rpc_address: localhost/rpc_address: 0.0.0.0/g" /etc/cassandra/cassandra.yaml
+  sudo sed -i "s/# broadcast_rpc_address: 1.2.3.4/broadcast_rpc_address: $NODE_IP/g" /etc/cassandra/cassandra.yaml
+  # Start Cassandra Cluster
+  sudo service cassandra start
+fi
 
 # post-provision of the Spark MASTER
 if [[ "$TYPE" == "MASTER" ]]; then

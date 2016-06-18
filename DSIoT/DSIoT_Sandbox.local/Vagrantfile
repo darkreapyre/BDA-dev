@@ -60,7 +60,7 @@ Vagrant.configure(2) do |config|
     master.vm.synced_folder ".", "/vagrant"
     master.vm.provision "shell" do |p|
       p.path = "scripts/provision.sh"
-      p.args = "-t MASTER -n #{slaves} -a #{slavesIP} -m #{masterName} -s #{slaveName} -b #{nodesIP} -c #{nodeName}"
+      p.args = "-t MASTER -n #{slaves} -a #{slavesIP} -m #{masterName} -s #{slaveName} -b #{nodesIP} -c #{nodeName} -q #{nodes}"
     end
 
     master.vm.post_up_message = "Remember to read the README file in your home directory..."
@@ -81,7 +81,7 @@ Vagrant.configure(2) do |config|
 
       node.vm.provision "shell" do |p|
         p.path = "scripts/provision.sh"
-        p.args = "-t SLAVE -n #{slaves} -a #{slavesIP} -m #{masterName} -s #{slaveName} -b #{nodesIP} -c #{nodeName}"
+        p.args = "-t SLAVE -n #{slaves} -a #{slavesIP} -m #{masterName} -s #{slaveName} -b #{nodesIP} -c #{nodeName} -q #{nodes}"
       end
     end
   end
@@ -102,7 +102,7 @@ Vagrant.configure(2) do |config|
 
       node.vm.provision "shell" do |p|
         p.path = "scripts/provision.sh"
-        p.args = "-t NODE -n #{nodes} -a #{nodesIP} -m #{masterName} -s #{nodeName} -b #{nodesIP} -c #{nodeName}"
+        p.args = "-t NODE -n #{nodes} -a #{nodesIP} -m #{masterName} -s #{nodeName} -b #{nodesIP} -c #{nodeName} -q #{nodes}"
       end
     end
   end

@@ -6,8 +6,8 @@ echo "# update system"
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
-echo "# install git + unzip"
-sudo apt-get -y install git unzip
+echo "# install basic packages"
+sudo apt-get -y install git zip unzip curl wget
 
 echo "# create directory to save apps"
 if ! [ -d $HOME/apps ]; then
