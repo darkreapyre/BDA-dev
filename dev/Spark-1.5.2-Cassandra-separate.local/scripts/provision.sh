@@ -15,7 +15,7 @@ usage() { echo "Usage: $0 [-t <MASTER|SLAVE|NODE>] [-n <1-9>] [-a <ip_address>] 
 while getopts ":t:n:a:m:s:b:c:q:" option; do
   case $option in
     t) TYPE=$OPTARG
-       if [[ "$TYPE" != "MASTER" && "$TYPE" != "SLAVE" && "$TYPE" != "NODE"]]; then
+       if [[ "$TYPE" != "MASTER" && "$TYPE" != "SLAVE" && "$TYPE" != "NODE" ]]; then
          usage
        fi ;;
     n) N=$OPTARG
@@ -27,9 +27,9 @@ while getopts ":t:n:a:m:s:b:c:q:" option; do
     m) MASTER=$OPTARG ;;
     s) SLAVE=$OPTARG ;;
     b) nIP=$OPTARG
-       if ! [[ $NIP =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+       if ! [[ $IP =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
          usage
-      fi ;;
+       fi ;;
     c) NODE=$OPTARG ;;
     q) Q=$OPTARG ;;
     *) usage ;;
@@ -42,7 +42,7 @@ if [ -z "$TYPE" ] || [ -z "$N" ] || [ -z "$IP" ] || [ -z "$MASTER" ] || [ -z "$S
   usage
 fi
 
-#echo "TYPE=$TYPE - N=$N - IP=$IP - MASTER=$MASTER - SLAVE=$SLAVE - IP=$nIP - NODE=$NODE - Q=$Q"
+echo "TYPE=$TYPE - N=$N - IP=$IP - MASTER=$MASTER - SLAVE=$SLAVE - IP=$nIP - NODE=$NODE - Q=$Q"
 
 STARTTIME=$(date +%s)
 LINE="····································································································"
