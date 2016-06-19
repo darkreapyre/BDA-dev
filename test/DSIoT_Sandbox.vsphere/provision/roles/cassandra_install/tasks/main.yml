@@ -1,4 +1,5 @@
 ---
+# The following is based on Cassandra being separate nodes and not on Spark Workers
 #- name: Update apt cache
 #  apt: update-cache=yes cache_valid_time=86400
 
@@ -15,6 +16,7 @@
 #    - wget
 #    - build-essential
 #    - python-software-properties
+#----------------------------------------------------------------------------------------------
 
 - name: Add Oracle Java Repository
   shell: add-apt-repository -y ppa:webupd8team/java

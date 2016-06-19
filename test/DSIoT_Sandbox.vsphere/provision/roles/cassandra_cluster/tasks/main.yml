@@ -1,9 +1,10 @@
 ---
-- name: Stop Cassandra
-  service: name=cassandra enabled=yes state=stopped
-
-- name: Clean default configuration
-  shell: sudo rm -rf /var/lib/cassandra/data/system/*
+# The following is trying to Automoate the cluster build
+#- name: Stop Cassandra
+#  service: name=cassandra enabled=yes state=stopped
+#
+#- name: Clean default configuration
+#  shell: sudo rm -rf /var/lib/cassandra/data/system/*
 
 # broadcast_rpc_address options
 #Option 1: netaddr package
@@ -27,12 +28,23 @@
 #"{{ [play_hosts[0]] if play_hosts|length == 1 else [play_hosts[0], play_hosts[1]] }}"
 # Option 4: Alternative for hosts in a particular group
 #"{% set comma = joiner(',') %}{% for host in groups['masters'] %}{{comma()}}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}{% endfor %}"
+#
+#- name: Copy the configuraiton template
+#  template: src=cassandra.yaml.j2 dest=/etc/cassandra/cassandra.yaml
+#
+#- name: Start the Cassandra Cluster
+#  service: name=cassandra enabled=yes state=started
+#
+## On the first node of the cluster, run:
+##sudo nodetool -status
+#-------------------------------------------------------------------------------------------------------
 
-- name: Copy the configuraiton template
-  template: src=cassandra.yaml.j2 dest=/etc/cassandra/cassandra.yaml
+# The following is based on building the cluster manually froma script
+# Copy cluster initialization script
+- name: Copy Cassandra Cluster configuration script
+  template: src=configure.sh.j2 dest-/home/vagrant/configure.sh owner=vagrant group=vagrant mode=0777
 
-- name: Start the Cassandra Cluster
-  service: name=cassandra enabled=yes state=started
-
-# On the first node of the cluster, run:
-#sudo nodetool -status
+- name: Create Cassandra Cluster (from scripts)
+  shell: /home/vagrant/configure.sh
+  become: yes
+  become_user: vagrant
