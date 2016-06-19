@@ -176,10 +176,10 @@
   roles:
     - dsbox
 
-#- name: Configure Cassandra Cluster
-#  hosts: all
-#  remote_user: vagrant
-#  sudo: yes
-#
-#  roles:
-#    - cassandra_cluster
+- name: Configure Cassandra Cluster
+  hosts: all
+  remote_user: vagrant
+  sudo: yes
+
+  roles:
+    - cassandra_cluster
