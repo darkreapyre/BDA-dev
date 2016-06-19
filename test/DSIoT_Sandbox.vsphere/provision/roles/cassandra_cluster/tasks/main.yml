@@ -14,9 +14,9 @@
 #broadcast_rpc_address: {{ ansible_default_ipv4.address }}
 
 # seeds options
-#Option 1: master default ip
-#"{{hostvars['master'].ansible_default_ipv4.address}}"
-#Option 2: masters group (mutiple IPs) <-- current
+#Option 1: master default ip <-- current
+#"{{ hostvars['master'].ansible_default_ipv4.address }}"
+#Option 2: masters group (mutiple IPs)
 #"{% for seed in groups['masters'] -%}
 #          {{ hostvars[seed].ansible_default_ipv4.address }}
 #          {%- if not loop.last %},{% endif -%}
