@@ -5,12 +5,23 @@
 - name: Clean default configuration
   shell: sudo rm -rf /var/lib/cassandra/data/system/*
 
+# broadcast_rpc_address options
 #Option 1: netaddr package
 #broadcast_rpc_address: {{ ipv4_host | ipaddr('address') }}
 #Option 2: eth0 <-- Preferred
 #broadcast_rpc_address: {{ ansible_eth0.ipv4.address }}
 #Option 2: default ip addredd <-- current
 #broadcast_rpc_address: {{ ansible_default_ipv4.address }}
+
+# seeds options
+#Option 1: master default ip
+#"{{hostvars['cassandra01'].ansible_default_ipv4.address}}"
+#Option 2: masters group (mutiple IPs) <-- current
+#"{% for seed in groups['masters'] -%}
+#          {{ hostvars[seed].ansible_default_ipv4.address }}
+#          {%- if not loop.last %},{% endif -%}
+#          {%- endfor %}"
+
 - name: Copy the configuraiton template
   template: src=cassandra.yaml.j2 dest=/etc/cassandra/cassandra.yaml
 
