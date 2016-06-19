@@ -21,6 +21,12 @@
 #          {{ hostvars[seed].ansible_default_ipv4.address }}
 #          {%- if not loop.last %},{% endif -%}
 #          {%- endfor %}"
+# Option 3: all hosts as seeds
+#"{% for host in groups.all %}{{ hostvars[host]['ansible_' + iface].ipv4.address }}{% if not loop.last %},{% endif %}{% endfor %}"
+# Option 4: using play_hosts
+#"{{ [play_hosts[0]] if play_hosts|length == 1 else [play_hosts[0], play_hosts[1]] }}"
+# Option 4: Alternative for hosts in a particular group
+#"{% set comma = joiner(',') %}{% for host in groups['masters'] %}{{comma()}}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}{% endfor %}"
 
 - name: Copy the configuraiton template
   template: src=cassandra.yaml.j2 dest=/etc/cassandra/cassandra.yaml

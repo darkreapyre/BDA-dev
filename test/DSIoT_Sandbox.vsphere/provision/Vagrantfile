@@ -34,6 +34,14 @@ groups = {
   "all_groups:children" => ["masters", "slaves"]
 }
 
+# To POTENTIALLY add the Cassandra configuration as group_vars
+#groups = {
+#  "masters" => [],
+#  "slaves" => [],
+#  "all_groups:children" = ["masters", "slaves"],
+#  "all_groups:vars" => {"broadcast_rpc_address" => "<static ip address>"} #<-- can't add jinja2 to Vagrantfile
+#  }
+
 Vagrant.configure("2") do |config|
   config.vm.box = 'vsphere'
   config.vm.box_url = './example_box/dummy.box'
