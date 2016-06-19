@@ -42,7 +42,7 @@
 # The following is based on building the cluster manually froma script
 # Copy cluster initialization script
 - name: Copy Cassandra Cluster configuration script
-  template: src=configure.sh.j2 dest-/home/vagrant/configure.sh owner=vagrant group=vagrant mode=0777
+  template: src=configure.sh.j2 dest=/home/vagrant/configure.sh owner=vagrant group=vagrant mode=0777
 
 - name: Create Cassandra Cluster (from scripts)
   shell: /home/vagrant/configure.sh
