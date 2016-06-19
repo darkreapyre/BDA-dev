@@ -15,7 +15,7 @@
 
 # seeds options
 #Option 1: master default ip
-#"{{hostvars['cassandra01'].ansible_default_ipv4.address}}"
+#"{{hostvars['master'].ansible_default_ipv4.address}}"
 #Option 2: masters group (mutiple IPs) <-- current
 #"{% for seed in groups['masters'] -%}
 #          {{ hostvars[seed].ansible_default_ipv4.address }}
