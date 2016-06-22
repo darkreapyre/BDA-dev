@@ -2,8 +2,8 @@
 
 echo "Starting bootstrap.sh"
 
-# Install git
-sudo apt-get install -y git
+# Install packages for Vagrant & Plugins
+sudo apt-get install -y git python-setuptools ruby-dev build-essential patch zlib1g-dev liblzma-dev
 
 # Install Vagrant
 sudo apt-get install -y vagrant
