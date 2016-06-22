@@ -1,0 +1,10 @@
+{% for k,v in hostvars.iteritems() %} 
+{{ v['ansible_eth0']['ipv4']['address'] }} {{ k }} 
+{% endfor %}
+
+# Auto-generated /etc/hosts
+#{% for k,v in hostvars.iteritems() %}
+#{% if 'masters' in v['group_names'] % }
+#{{v['ansible_eth0']['ipv4']['address']}} {{ k }}
+#{% endif % }  
+#{% endfor %}

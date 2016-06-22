@@ -1,0 +1,10 @@
+[Unit]
+Description=Hadoop Distributed File System NameNode
+
+[Service]
+Type=forking
+ExecStart={{ hadoop_home }}/sbin/hadoop-daemon.sh --script hdfs start namenode
+User={{ cluster_user }}
+
+[Install]
+WantedBy=multi-user.target
