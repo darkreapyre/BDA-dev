@@ -13,7 +13,6 @@ if ! [ -f $APPS_DIR/$MAVEN_FILE-bin.tar.gz ] ; then
   sudo wget -q -P $APPS_DIR -c $MAVEN_URL/$MAVEN_FILE-bin.tar.gz
 fi
 sudo tar xzvf $APPS_DIR/$MAVEN_FILE-bin.tar.gz -C /opt
-#sudo rm $MAVEN_FILE-bin.tar.gz
 cd /opt
 sudo ln -s $MAVEN_FILE maven
 
@@ -38,7 +37,8 @@ sudo env "PATH=$PATH" mvn clean package -Pcassandra-spark-1.5 -Dhadoop.version=2
 sudo mkdir $ZEPPELIN_HOME/local-repo
 sudo chmod a+w,+t $ZEPPELIN_HOME/local-repo
 cd $ZEPPELIN_HOME/..
-sudo ln -s /home/{{ cluster_user }}/zeppelin-env.sh $ZEPPELIN_HOME/conf/zeppelin-env.sh
+#sudo ln -s /home/{{ cluster_user }}/zeppelin-env.sh $ZEPPELIN_HOME/conf/zeppelin-env.sh
+#sudo cp -f /home/zeppelin-env.sh $ZEPPELIN_HOME/conf/
 
 # this is the only way to make zeppelin start OK
 #sudo chown -R vagrant:vagrant $ZEPPELIN_HOME
