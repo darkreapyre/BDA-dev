@@ -86,7 +86,7 @@
       copy: src=apps/scala-{{ scala_version }}.deb dest=/home/{{ cluster_user }}/scala-{{ scala_version }}.deb
       become: yes
       become_user: "{{ cluster_user }}"
-      
+
     - name: Create local directory for ssh keys
       local_action: file path=sshkeys state=directory
     

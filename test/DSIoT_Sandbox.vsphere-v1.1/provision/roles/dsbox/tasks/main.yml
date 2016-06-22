@@ -22,6 +22,7 @@
     - {src: "shiny-server.sh.j2", dest: "/home/{{ cluster_user }}/scripts/shiny-server.sh"}
     - {src: "cassandra.sh.j2", dest: "/home/{{ cluster_user }}/scripts/cassandra.sh"}
     - {src: "zeppelin.sh.j2", dest: "/home/{{ cluster_user }}/scripts/zeppelin.sh"}
+    - {src: "zeppelin-env.sh.j2", dest: "/home/{{ cluster_user }}/zeppelin-env.sh"}
     - {src: "start-pyspark-notebook.sh.j2", dest: "/home/{{ cluster_user }}/scripts/start-pyspark-notebook.sh"}
     - {src: "sparkR-start.R.j2", dest: "/home/{{ cluster_user }}/scripts/sparkR-start.R"}
 
@@ -68,6 +69,11 @@
 
 - name: Install Rstudio Shiny Server (from scripts)
   shell: /home/{{ cluster_user }}/scripts/shiny-server.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Install maven (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/zeppelin.sh
   become: yes
   become_user: "{{ cluster_user }}"
 

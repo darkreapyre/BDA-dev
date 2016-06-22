@@ -94,31 +94,33 @@
   #apt: deb="/tmp/scala-{{ scala_version }}.deb" #install scala if not using one time download
   apt: deb="/home/{{ cluster_user }}/scala-{{ scala_version }}.deb"
 
+# Although it doesn't seem to be necessary, the following will downlaod maven to all hosts. Maven is only necesary now to get Zeppelin installed 
+# on the master.
 # The following is used to downlaod maven from every host as a opposed to a one time download
 #- name: Download apcahe maven
 #  get_url: url=http://mirror.nbtelecom.com.br/apache/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz dest=/tmp
-
-- name: Extract maven
-  #unarchive: copy=no creates=/opt/apache-maven-{{ maven_version }} dest=/opt src=/tmp/apache-maven-{{ maven_version }}-bin.tar.gz owner={{ cluster_user }} group={{ cluster_user }} mode=0755 #use if not using one time download
-  unarchive: copy=yes creates=/opt/apache-maven-{{ maven_version }} dest=/opt src=apps/apache-maven-{{ maven_version }}-bin.tar.gz owner={{ cluster_user }} group={{ cluster_user }} mode=0755
-  #command: tar xvfz /home/{{ cluster_user }}/apache-maven-{{ maven_version }}-bin.tar.gz -C /opt #manual extract 
+#
+#- name: Extract maven
+#  #unarchive: copy=no creates=/opt/apache-maven-{{ maven_version }} dest=/opt src=/tmp/apache-maven-{{ maven_version }}-bin.tar.gz owner={{ cluster_user }} group={{ cluster_user }} mode=0755 #use if not using one time download
+#  unarchive: copy=yes creates=/opt/apache-maven-{{ maven_version }} dest=/opt src=apps/apache-maven-{{ maven_version }}-bin.tar.gz owner={{ cluster_user }} group={{ cluster_user }} mode=0755
+#  #command: tar xvfz /home/{{ cluster_user }}/apache-maven-{{ maven_version }}-bin.tar.gz -C /opt #manual extract 
 
 # The following is only used if the tar command is used as opposed to unarchive with "copy: yes"
 #- name: Set permissions on maven
 #  file: path=/opt/apache-maven-{{ maven_version }} state=directory owner={{ cluster_user }} group={{ cluster_user }}
 
-- name: Set M2_HOME in .bashrc
-  lineinfile:
-    dest: /home/{{ cluster_user }}/.bashrc
-    line: 'export M2_HOME=/opt/apache-maven-{{ maven_version }}'
-    regexp: 'export M2_HOME=/opt/apache-maven-{{ maven_version }}.*'
-  become: yes
-  become_user: "{{ cluster_user }}"
+#- name: Set M2_HOME in .bashrc
+#  lineinfile:
+#    dest: /home/{{ cluster_user }}/.bashrc
+#    line: 'export M2_HOME=/opt/apache-maven-{{ maven_version }}'
+#    regexp: 'export M2_HOME=/opt/apache-maven-{{ maven_version }}.*'
+#  become: yes
+#  become_user: "{{ cluster_user }}"
 
-- name: Add maven to .bashrc
-  lineinfile:
-    dest: /home/{{ cluster_user }}/.bashrc
-    line: 'export PATH=/opt/apache-maven-{{ maven_version }}/bin:$PATH'
-    regexp: 'export PATH=/opt/apache-maven-{{ maven_version }}.*'
-  become: yes
-  become_user: "{{ cluster_user }}"
+#- name: Add maven to .bashrc
+#  lineinfile:
+#    dest: /home/{{ cluster_user }}/.bashrc
+#    line: 'export PATH=/opt/apache-maven-{{ maven_version }}/bin:$PATH'
+#    regexp: 'export PATH=/opt/apache-maven-{{ maven_version }}.*'
+#  become: yes
+#  become_user: "{{ cluster_user }}"
