@@ -72,7 +72,7 @@
   become: yes
   become_user: "{{ cluster_user }}"
 
-- name: Install maven (from scripts)
+- name: Install Zeppelin (from scripts)
   shell: /home/{{ cluster_user }}/scripts/zeppelin.sh
   become: yes
   become_user: "{{ cluster_user }}"

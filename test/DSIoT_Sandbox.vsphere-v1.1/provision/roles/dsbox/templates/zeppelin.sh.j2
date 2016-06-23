@@ -32,15 +32,15 @@ fi
 
 export PATH=$MAVEN_HOME/bin:$PATH
 cd $ZEPPELIN_HOME
-sudo env "PATH=$PATH" mvn clean package -Pcassandra-spark-1.5 -Dhadoop.version=2.6.2 -Phadoop-2.6 -Ppyspark -Psparkr -DskipTests
+sudo env "PATH=$PATH" mvn clean package -Pcassandra-spark-1.5 -DskipTests
 # avoid problems with %dep
 sudo mkdir $ZEPPELIN_HOME/local-repo
 sudo chmod a+w,+t $ZEPPELIN_HOME/local-repo
 cd $ZEPPELIN_HOME/..
 #sudo ln -s /home/{{ cluster_user }}/zeppelin-env.sh $ZEPPELIN_HOME/conf/zeppelin-env.sh
-#sudo cp -f /home/zeppelin-env.sh $ZEPPELIN_HOME/conf/
+sudo mv /home/zeppelin-env.sh $ZEPPELIN_HOME/conf/
 
 # this is the only way to make zeppelin start OK
-#sudo chown -R vagrant:vagrant $ZEPPELIN_HOME
-#sudo env "PATH=$PATH" /opt/zeppelin/bin/zeppelin-daemon.sh start
-#/opt/zeppelin/bin/zeppelin-daemon.sh start
+sudo chown -R vagrant:vagrant $ZEPPELIN_HOME
+sudo env "PATH=$PATH" /opt/zeppelin/bin/zeppelin-daemon.sh start
+/opt/zeppelin/bin/zeppelin-daemon.sh start
