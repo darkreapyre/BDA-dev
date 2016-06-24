@@ -5,6 +5,9 @@
 - name: Copy Spark-kernel to Apps directory
   copy: src=spark-kernel-0.1.5-SNAPSHOT.tar.gz dest=/home/{{ cluster_user }}/apps mode=0777
 
+#- name: Copy Cassandra-kernel to Apps directory
+#  copy: src=kernel-0.1.4.5-cassandra.tgz dest=/home/{{ cluster_user }}/apps mode=0700
+
 - name: Create scripts directory
   file: path=/home/{{ cluster_user }}/scripts state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=0777 recurse=yes
 
@@ -21,8 +24,8 @@
     - {src: "rstudio-server.sh.j2", dest: "/home/{{ cluster_user }}/scripts/rstudio-server.sh"}
     - {src: "shiny-server.sh.j2", dest: "/home/{{ cluster_user }}/scripts/shiny-server.sh"}
     - {src: "cassandra.sh.j2", dest: "/home/{{ cluster_user }}/scripts/cassandra.sh"}
-    - {src: "zeppelin.sh.j2", dest: "/home/{{ cluster_user }}/scripts/zeppelin.sh"}
-    - {src: "zeppelin-env.sh.j2", dest: "/home/{{ cluster_user }}/zeppelin-env.sh"}
+#    - {src: "zeppelin.sh.j2", dest: "/home/{{ cluster_user }}/scripts/zeppelin.sh"}
+#    - {src: "zeppelin-env.sh.j2", dest: "/home/{{ cluster_user }}/zeppelin-env.sh"}
     - {src: "start-pyspark-notebook.sh.j2", dest: "/home/{{ cluster_user }}/scripts/start-pyspark-notebook.sh"}
     - {src: "sparkR-start.R.j2", dest: "/home/{{ cluster_user }}/scripts/sparkR-start.R"}
 

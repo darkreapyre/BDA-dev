@@ -39,5 +39,8 @@
     - oracle-java8-installer
     - oracle-java8-set-default
 
-- name: Install Cassandra
-  apt: pkg=cassandra state=installed update-cache=yes
+- name: Install Cassandra and Python driver
+  apt: pkg={{ item }} state=installed update-cache=yes
+  with_items:
+    - cassandra
+    - cassandra-driver
