@@ -95,17 +95,18 @@ if [[ "$TYPE" == "MASTER" ]]; then
   51-shiny-server.sh
   99-clean.sh
   "
-else
-  # copy the authorized_keys to ~/.ssh
-  #su vagrant -c "cat $SSH_KEYS_PATH/authorized_keys >> /home/vagrant/.ssh/authorized_keys"
+fi
+
+if [[ "$TYPE" == "SLAVE" ]]; then
   sudo -u vagrant sh -c "cat $SSH_KEYS_PATH/authorized_keys >> /home/vagrant/.ssh/authorized_keys"
-  #su vagrant -c "chmod 600 /home/vagrant/.ssh/authorized_keys"
   sudo -u vagrant sh -c "chmod 600 /home/vagrant/.ssh/authorized_keys"
-  if [[ "$TYPE" == "SLAVE" ]]; then
-    SCRIPTS="$SCRIPTS 99-clean.sh"
-  else
-    SCRIPTS="00-init.sh 21-cassandra.sh 99-clean.sh"
-  fi
+  SCRIPTS="$SCRIPTS 99-clean.sh"
+fi
+
+if [[ "$STYPE" == "NODE" ]]; then
+  sudo -u vagrant sh -c "cat $SSH_KEYS_PATH/authorized_keys >> /home/vagrant/.ssh_keys/authorized_keys"
+  sudo -u vagrant sh -c "chmod 600 /home/vagrant/.ssh/authorized_keys"
+  SCRIPTS="$00-init.sh 21-cassandra.sh 99-clean.sh"
 fi
 
 # run scripts
