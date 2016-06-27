@@ -103,7 +103,7 @@ Vagrant.configure(2) do |config|
 
       node.vm.provision "shell" do |p|
         p.path = "scripts/provision.sh"
-        p.args = "-t NODE -n #{nodes} -a #{nodesIP} -m #{masterName} -s #{nodeName} -b #{nodesIP} -c #{nodeName} -q #{nodes}"
+        p.args = "-t NODE -n #{slaves} -a #{slavesIP} -m #{masterName} -s #{slaveName} -b #{nodesIP} -c #{nodeName} -q #{nodes}"
       end
     end
   end
