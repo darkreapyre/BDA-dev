@@ -103,7 +103,7 @@ if [[ "$TYPE" == "SLAVE" ]]; then
   SCRIPTS="$SCRIPTS 99-clean.sh"
 fi
 
-if [[ "$STYPE" == "NODE" ]]; then
+if [[ "$TYPE" == "NODE" ]]; then
   sudo -u vagrant sh -c "cat $SSH_KEYS_PATH/authorized_keys >> /home/vagrant/.ssh/authorized_keys"
   sudo -u vagrant sh -c "chmod 600 /home/vagrant/.ssh/authorized_keys"
   SCRIPTS="00-init.sh 21-cassandra.sh 99-clean.sh"
