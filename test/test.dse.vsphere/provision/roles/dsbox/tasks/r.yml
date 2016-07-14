@@ -1,0 +1,48 @@
+---
+# The Ubuntu archives on CRAN are signed with a key with ID E084DAB9. Add this key to the system.
+- name: Add R public key
+  apt_key:
+    id: E084DAB9
+    keyserver: keyserver.ubuntu.com
+    state: present
+
+# in order to get the latest version of R, add CRAN repository to the to the list of sources
+- name: Add  cran-r Repository
+  apt_repository:
+    repo: "{{item.type}} {{item.url}}"
+    state: present
+    update_cache: true
+  with_items: r_repository
+
+- name: Install R
+  apt: pkg=r-base state=present
+
+- name: openssl and libcurl required for R devtools package
+  apt: pkg={{item}} state=present
+  with_items:
+    - libssl-dev
+    - libcurl4-openssl-dev
+
+# knitr will also pull in the `evaluate` R package as a dependency
+- name: Install R packages required for the R interpreter. This may take a while.
+  shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs=c('{{item}}'), repos=c('{{r_packages_repos}}'))"
+  with_items:
+    - knitr
+    - devtools
+
+- name: Install rCharts (requires devtools first).
+  shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('rCharts' %in% installed.packages()[,'Package'])) devtools::install_github('rCharts', 'ramnathv')"
+
+- name: Install R repr package recommended for the R interpreter display system (requires devtools first).
+  shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('repr' %in% installed.packages()[,'Package'])) devtools::install_github('IRkernel/repr')"
+
+- name: Install R packages recommended for the R interpreter.
+  shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs=c('{{item}}'), repos=c('{{r_packages_repos}}'))"
+  with_items:
+    - ggplot2
+    - googleVis
+    - mplot
+    - htmltools
+    - base64enc
+    - data.table
+    - rmarkdown

@@ -1,0 +1,5 @@
+[datastax] 
+name = DataStax Repo for Apache Cassandra
+baseurl = https://datastaxrepo_gmail.com:utJVKEg4lKeaWTX@rpm.datastax.com/enterprise
+enabled = 1
+gpgcheck = 0
