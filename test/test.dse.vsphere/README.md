@@ -79,19 +79,32 @@ $ sudo shutdown now
 ```
 
 ### Configure the Ansible Control node
-A dedicated Ansible Control node is required to load and execute the Ansible deployment. To this end a dedicated Vagrant virtual machine is created. For the sake of this architecture, this is a Centos 7.2 virtual machine.
-
+A dedicated Ansible Control node is required to load and execute the Ansible deployment. To this end a dedicated Vagrant virtual machine(Centos 7.2) is created.  
 To launch the Ansible Control node without starting the cluster deployment:
-1. Edit the `Vagrantfile` in the root directory, and comment out the following line:
+1. Edit the `bootstrap.sh` file in the root directory, and comment out the last line as follows:
 ```
-#    bootstrap.vm.provision :shell, :path => "bootstrap.sh", privileged: false
+#vagrant up --no-parallel
 ```
 2. Start the Ansible Control node by typing:
 ```
 $ vagrant up
 ```
 
-During the installation process
+During the installation process, Vagrant, Ansible and the necessary Python API's to communicate with VMware are installed as well as the `provision` directory is copied to the Ansible Control node. This directory contains all the necessary code to deploy the cluster. 
+
+--provision
+ |
+ |--example_box
+ | |
+ | -dummy.box
+ |
+ |--roles
+
+
+
+
+
+The next section describes how to 
 
 
 
@@ -167,17 +180,20 @@ $ vagrant up --provider=vsphere
 
 ```
 ...
+
         case x => old(x)
       }
     }
   )
-...q
+
+...
 
 ```
 
 
 ```
 ...
+
         case x => old(x)
       }
     },
@@ -188,6 +204,7 @@ $ vagrant up --provider=vsphere
       )
     }
   )
+
 ...
 
 ```

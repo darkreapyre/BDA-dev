@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "Starting Bootstrap node"
+echo "Configuring Ansible Control node"
 
 # RUN AS ROOT
 # http://www.itzgeek.com/how-tos/linux/centos-how-tos/install-virtualbox-4-3-on-centos-7-rhel-7.html
@@ -13,28 +13,20 @@ sudo yum -y install kernel-devel kernel-headers dkms git curl unzip wget
 sudo yum -y groupinstall "Development Tools"
 sudo yum -y update
 
-# Install Vitualbox
-# Download the repo
-#wget http://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo -O /etc/yum.repos.d/virtualbox.repo
-
-# Install Virtualbox
-#yum install VirtualBox-4.3
-
-# Rebuild the dependencie
-#/usr/lib/virtualbox/vboxdrv.sh setup
-
-# Add the user to the virtual box user group
-# VERIFY
-#usermod -a -G vboxusers vagrant
-
-# Install Vagrant (ADD FULL PATH THROUGH WGET)
+# Install Vagrant
+echo "Installing Vagrant"
 sudo rpm -Uvh https://releases.hashicorp.com/vagrant/1.8.4/vagrant_1.8.4_x86_64.rpm
 vagrant plugin install vagrant-vsphere
 vagrant plugin install vagrant-address
 
+
 # Install Ansible
-sudo yum -y install ansible #install necessary python dependancies
+echo "Installing Ansible"
+sudo yum -y install ansible
 sudo easy_install pip
+
+# Install Python libraries for vSphere
+echo "Installing vSpehere API"
 sudo pip install pysphere pyvmomi
 
 # To resolve permission issues with nested Vagrant
@@ -42,10 +34,6 @@ cp -R /vagrant/provision /home/vagrant/
 echo "Bootstrap Node Complete"
 
 # Provision
-echo "Deploy Datastax Enterprise on Vmware vSphere Virtual Machines"
+echo "Deploy Datastax Enterprise on VMware vSphere Virtual Machines"
 cd /home/vagrant/provision
 vagrant up --no-parallel
-
-# Manually check ip address of a VM
-#vagrant address [name]
-#vagrant ssh-config [name] | grep HostName | awk '{ print "[name]:" $2}'
