@@ -17,6 +17,7 @@ This document details the process of setting up an ansible control node with `Va
 
 This documnet further details some of the additional processes and tools used in order to fully leverage the architecture, 
 
+## Base Configuration Overview
 ### Requirements
 The following are the basic components needed to start. 
 1. A working vSphere 6.0 environment
@@ -92,23 +93,22 @@ $ vagrant up
 
 During the installation process, Vagrant, Ansible and the necessary Python API's to communicate with VMware are installed as well as the `provision` directory is copied to the Ansible Control node. This directory contains all the necessary code to deploy the cluster. 
 
---provision
- |
- |--example_box
- | |
- | -dummy.box
- |
- |--roles
+```
+provision
++--example_box        <-- Vagrant metadata for the vSphere Template
+|  +--dummy.box
++--roles              <-- Ansible Roles for the various cluster components
+|  +--dsbox
+|  +--dse
+|  +--opsecenter
++--init.yml           <-- Cluster configuration data like vSphere Usernames; Passwords; Software versions etc.
++--site.yml           <-- Cluster-wide Ansible Playbook
++--Vagrantfile        <-- Vagrant deployment file for vSphere cluster nodes
+```
 
+The next section describes the above components and how to build them.
 
-
-
-
-The next section describes how to 
-
-
-
-
+## Cluster Deployment Configuration and Setup
 ### Configure Vagrant to deploy the Templates
 Using the Vagrant system, locate the `example_box`. This *dummy* box should have been created when installing the _vagrant-vsphere_ plugin and will typically be located in the ~/.vagrant.d/gems/gems/vagrant-vsphere-1.6.0/ directory. Once located, perform the following:  
 - Create the _dummy box_.
@@ -116,7 +116,7 @@ Using the Vagrant system, locate the `example_box`. This *dummy* box should have
 $ cd ~/.vagrant.d/gems/gems/vagrant-vsphere-1.6.0/example_box
 $ tar cvfz dummy.box ./metadata.json
 ```
-- Make a new in directory your `<Vagrant Configuration Directory>` to start creating the new box and additional configuration files.
+- Make a new in directory your `<Vagrant Configuration Directory> (e.g. provision)` to start creating the new box and additional configuration files.
 ```sh
 $ cd /`<Vagrant Configuration Directory>`
 $ mkdir -p example_box
@@ -155,26 +155,64 @@ $ touch Vagrantfile
     end
   end
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 - Launch the virtual machines.
 ```sh
 $ vagrant up --provider=vsphere
 ```
+__Note:__ As is highlighted below, The Vagrantfile has ansible parameters that should only be executed after all the last virtual machine has been provisioned. Using the `vagrant up` command will provision the virtual machines in parallel. To ensure that that the provisioning is executed in serial, execute the following:
+```sh
+$ vagrant up --no-parallel
+```
 
-#Appendix A: Create a "fat" jar for the 'spark-cassandra-connector'
+### Configure Vagrant Ansible provisioner
+
+
+
+
+```
+groups = {
+  "dse" => [],
+  "flink" => [],
+  "opscenter" => [],
+  "all_groups:children" => ["dse", "flink", "opscenter"]
+}
+
+...
+
+      if i == Total
+        config.vm.provision :ansible do |ansible|
+          ansible.playbook = "site.yml"
+          ansible.groups = groups
+          ansible.extra_vars = {
+            "dse_version" => DSE_Version,
+            "spark_version" => Spark_Version,
+            "maven_version" => Maven_Version,            
+            "cluster_user" => Master_User,
+            "cluster_password" => Master_Password
+          }
+          ansible.limit = "all"
+          ansible.verbose = "v"
+          ansible.raw_ssh_args = ['-o ControlPersist=30m']
+        end
+      end
+
+```
+
+After the last virtual machine has been brought online, the Ansible Controller will initialize the cluster, based on the site playbook (`site.yml), to execute the following:
+
+1. Create the cluster administrator (`admin`) on all virtual machines and enable `SSH` access.
+2. 
+
+
+
+
+## Configure the Ansible Cluster-wide variables
+
+
+
+
+
+# Appendix A: Create a "fat" jar for the spark-cassandra-connector
 
 
 
