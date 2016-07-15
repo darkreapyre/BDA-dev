@@ -1,31 +1,40 @@
-# Installing a Spark and Cassandra Cluster on VMware vSphere
+# Installing a DataStax Analytics and Flink Complex Event Processing Cluster on VMware vSphere
 __WORK IN PROGRESS!__  
 ## Introduction
-This document details the process of setting up an admin node with `Vagrant` and connecting to a __Vmware vSphere 6.0__ environment to configure a virtualized Big Data ecosystem for Data Science purposes. It further details how to leverage the admin node to build out the environment using __ansible playbooks__ with the following:
-- Spark 1.5.2
-- Hadoop 2.6.2
+This document details the process of setting up an ansible control node with `Vagrant` and connecting to a __Vmware vSphere 6.0__ environment to configure a virtualized Big Data ecosystem for the purpose of using it during Data Science for the Internet of Things (DSIoT) course. It further details how to leverage the ansible control node to build out the environment using __ansible playbooks__ with the following:
+
 - Jupyter 4.0.6
-- Python 2 & 3
-- Scala 2.10
-- R
+- Zeppelin 0.7-SNAPSHOT
+- Python 2.7
+- Scala 2.10.5
+- R __TBD__
 - RStudio Server 0.99.491
 - RStudio Shiny Server 1.4.1.759
-- Java 7
-- Cassandra 3.5
+- Java 8
+- DataStax Enterprise 5.0.1 (incl. Cassandra 3.0; Titan Graph __VERSION TBD__, Spark 1.6.1 and Solr __VERISON TBD__)
+- DataStax Opscenter 6.0
+- Flink 1.0
+
+This documnet further details some of the additional processes and tools used in order to fully leverage the architecture, 
 
 ### Requirements
 The following are the basic components needed to start. 
 1. A working vSphere 6.0 environment
 2. Vagrant 1.8.4
 3. Vagrant Plugins:
-  - _vagrant-guests-photon_
   - _vagrant-vsphere_  
     __Note:__ _vagrant-vsphere_ requires the that [Nokogiri](http://www.nokogiri.org/tutorials/installing_nokogiri.html) be installed.
-4. [VMware Photon](https://vmware.github.io/photon/assets/files/getting_started_with_photon_on_vsphere.pdf)
-5. Ubuntu 15.04 (Vivid Vervet)
+4. Ubuntu 14.04 (Trusty)
 
 ### Create an Ubuntu Template  
-In order to leverage the `systemd` service funcitonality within Ubuntu, the Ubuntu Template is based on Ubuntu 15.04 (Vivid Vervet). Creating the template for Vmware is exactly the same as creating a Vagrant "box". Therefore, the following is [based on](https://blog.engineyard.com/2014/building-a-vagrant-box) that process. After creating the *vivid-tmp* virtual machine, power it up, login and perform the following:  
+#### Virtual Machine Configuration
+Below are the recommended virtual machine configuration settings to ensure that all hardware reuquirements are met:
+- 16 vCPU
+- 64GB Virtual RAM
+- 250GB Virtual Disk
+
+#### Ubuntu Installation and Configuration
+Creating the template for Vmware is exactly the same as creating a Vagrant "box". Therefore, the following is [based on](https://blog.engineyard.com/2014/building-a-vagrant-box) that process. After creating the *trusty-tmp* virtual machine, power it up, login and perform the following:  
 - Install VMware Tools. As a good practice it is suggested to add some of the basic tools to the template, even if these are part of the overall deployment process later.
 ```sh
 $ sudo apt-get install open-vm-tools git zip unzip wget curl acl
@@ -42,7 +51,7 @@ $ sudo apt-get -y update
 $ sudo apt-get -y upgrade
 $ sudo shutdown -r now
 ```
-- Install the Vagrant SSH Key
+- Install the Public Vagrant SSH Key
 ```sh
 $ mkdir -p /home/vagrant/.ssh
 $ chmod 0700 /home/vagrant/.ssh
@@ -63,11 +72,30 @@ AuthorizedKeysFile %h/.ssh/authorized_keys
 ```sh
 $ sudo service ssh restart
 ```
-- Remove the `vivi-tmp` entry in `/etc/hosts`
+- Remove the `trusty-tmp` entry in `/etc/hosts`
 - Shut down the server and convert it to a template
 ```sh
 $ sudo shutdown now
 ```
+
+### Configure the Ansible Control node
+A dedicated Ansible Control node is required to load and execute the Ansible deployment. To this end a dedicated Vagrant virtual machine is created. For the sake of this architecture, this is a Centos 7.2 virtual machine.
+
+To launch the Ansible Control node without starting the cluster deployment:
+1. Edit the `Vagrantfile` in the root directory, and comment out the following line:
+```
+#    bootstrap.vm.provision :shell, :path => "bootstrap.sh", privileged: false
+```
+2. Start the Ansible Control node by typing:
+```
+$ vagrant up
+```
+
+During the installation process
+
+
+
+
 ### Configure Vagrant to deploy the Templates
 Using the Vagrant system, locate the `example_box`. This *dummy* box should have been created when installing the _vagrant-vsphere_ plugin and will typically be located in the ~/.vagrant.d/gems/gems/vagrant-vsphere-1.6.0/ directory. Once located, perform the following:  
 - Create the _dummy box_.
@@ -114,35 +142,52 @@ $ touch Vagrantfile
     end
   end
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 - Launch the virtual machines.
 ```sh
 $ vagrant up --provider=vsphere
 ```
 
-#Appendix A: Create a Photon Template  
-Follow the __[Vmware Photon](https://vmware.github.io/photon/assets/files/getting_started_with_photon_on_vsphere.pdf)__ Getting Started Guide to create the *photon-tmp* Virtual Machine. After the Template has been created, power it up, login and perform the following:  
-- Create the *vagrant* user.
-  ```sh
-  $ useradd vagrant
-  ```
-- Configure the *vagrant* user password as *vagrant*.
-  ```sh
-  $ passwd vagrant
-  ```
-- Use `visudo` to add the *vagrant* user as a __sudoer__, by adding the following line.
-  ```sh
-  vagrant ALL=(ALL) NOPASSWD:ALL
-  ```
-- Add the __SSH Key__ to the *vagrant* user account.
-  ```sh
-  $ mkdir -p /home/vagrant/.ssh
-  $ wget --no-check-certificate https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub -O /home/vagrant/.ssh/authorized_keys
-  $ chmod 0700 /home/vagrant/.ssh
-  $ chmod 0600 /home/vagrant/.ssh/authorized_keys
-  $ chown -R vagrant /home/vagrant/.ssh
-  ```
-- Shut down thesh Virtual Machine.
-  ```sh
-  $ shutdown now
-  ```
-- Using the vSphere Web Client, convert the *photon-tmp* Virtual Machine to a Template.
+#Appendix A: Create a "fat" jar for the 'spark-cassandra-connector'
+
+
+
+```
+...
+        case x => old(x)
+      }
+    }
+  )
+...q
+
+```
+
+
+```
+...
+        case x => old(x)
+      }
+    },
+    assemblyShadeRules in assembly := {
+      val shadePackage = "shade.com.datastax.connector"
+      Seq(
+        ShadeRule.rename("com.google.**" -> s"$shadePackage.google.@1").inAll
+      )
+    }
+  )
+...
+
+```
