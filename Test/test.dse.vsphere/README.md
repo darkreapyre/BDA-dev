@@ -82,6 +82,7 @@ $ sudo shutdown now
 ### Configure the Ansible Control node
 A dedicated Ansible Control node is required to load and execute the Ansible deployment. To this end a dedicated Vagrant virtual machine (Centos 7.2) is created.  
 To launch the Ansible Control node without starting the cluster deployment:
+
 1. Edit the `bootstrap.sh` file in the root directory, and comment out the last line as follows:
 ```
 #vagrant up --no-parallel
