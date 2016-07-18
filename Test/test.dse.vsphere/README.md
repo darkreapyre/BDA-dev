@@ -23,8 +23,7 @@ The following are the basic components needed to start.
 1. A working vSphere 6.0 environment
 2. Vagrant 1.8.4
 3. Vagrant Plugins:
-  - _vagrant-vsphere_  
-    __Note:__ _vagrant-vsphere_ requires the that [Nokogiri](http://www.nokogiri.org/tutorials/installing_nokogiri.html) be installed.
+	- __vagrant-vsphere__
 4. Ubuntu 14.04 (Trusty)
 5. DHCP server on the subnet that will the virtual machines.
 
