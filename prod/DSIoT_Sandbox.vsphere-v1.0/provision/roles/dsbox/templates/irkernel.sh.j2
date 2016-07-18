@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-echo "# install IRkernel"
-
-sudo R -e "install.packages(c('shiny', 'rzmq', 'repr', 'IRkernel', 'IRdisplay', 'rmarkdown', 'knitr', 'rjson', 'rPython', 'plyr', 'psych', 'reshape2'), repos = c('http://irkernel.github.io/', 'http://cran.rstudio.com/', 'http://www.freestatistics.org/cran/'))"
-
-sudo su {{ cluster_user }} -c "R -e 'IRkernel::installspec()' "
