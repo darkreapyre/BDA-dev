@@ -1,5 +1,0 @@
----
-
-- name: restart phoenix queryserver
-  service: name=phoenix-queryserver state=restarted
-  when: '"phoenix_queryserver" in group_names'
