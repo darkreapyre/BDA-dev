@@ -26,6 +26,7 @@ The following are the basic components needed to start.
   - _vagrant-vsphere_  
     __Note:__ _vagrant-vsphere_ requires the that [Nokogiri](http://www.nokogiri.org/tutorials/installing_nokogiri.html) be installed.
 4. Ubuntu 14.04 (Trusty)
+5. DHCP server on the subnet that will the virtual machines.
 
 ### Create an Ubuntu Template  
 #### Virtual Machine Configuration
@@ -80,7 +81,7 @@ $ sudo shutdown now
 ```
 
 ### Configure the Ansible Control node
-A dedicated Ansible Control node is required to load and execute the Ansible deployment. To this end a dedicated Vagrant virtual machine(Centos 7.2) is created.  
+A dedicated Ansible Control node is required to load and execute the Ansible deployment. To this end a dedicated Vagrant virtual machine (Centos 7.2) is created.  
 To launch the Ansible Control node without starting the cluster deployment:
 1. Edit the `bootstrap.sh` file in the root directory, and comment out the last line as follows:
 ```
@@ -101,7 +102,7 @@ provision
 |  +--dsbox
 |  +--dse
 |  +--opsecenter
-+--init.yml           <-- Cluster configuration data like vSphere Usernames; Passwords; Software versions etc.
++--init.yml           <-- Cluster-wide configuration variables (vSphere Usernames; Passwords; Software versions etc.)
 +--site.yml           <-- Cluster-wide Ansible Playbook
 +--Vagrantfile        <-- Vagrant deployment file for vSphere cluster nodes
 ```
@@ -109,7 +110,7 @@ provision
 The next section describes the above components and how to build them.
 
 ## Cluster Deployment Configuration and Setup
-### Configure Vagrant to deploy the Templates
+### Configure Vagrant to deploy the vSphere Template
 Using the Vagrant system, locate the `example_box`. This *dummy* box should have been created when installing the _vagrant-vsphere_ plugin and will typically be located in the ~/.vagrant.d/gems/gems/vagrant-vsphere-1.6.0/ directory. Once located, perform the following:  
 - Create the _dummy box_.
 ```sh
@@ -159,24 +160,39 @@ $ touch Vagrantfile
 ```sh
 $ vagrant up --provider=vsphere
 ```
-__Note:__ As is highlighted below, The Vagrantfile has ansible parameters that should only be executed after all the last virtual machine has been provisioned. Using the `vagrant up` command will provision the virtual machines in parallel. To ensure that that the provisioning is executed in serial, execute the following:
+__Note:__ As is highlighted below, The Vagrantfile has ansible parameters that should only be executed after all the last virtual machine has been provisioned. Using the `vagrant up` command will provision the virtual machines in parallel. To ensure that that the provisioning is executed one node at a time, execute the following:
 ```sh
 $ vagrant up --no-parallel
 ```
 
-### Configure Vagrant Ansible provisioner
+### Configure the Ansible Cluster-wide variables: __init.yml__
+The key variables used across the cluster are:
+- Total: The total number of vSphere Virtual Machines to provision.
+	- It is recommended to have a total of 10. 
+	- The fist vm is the *admin* node. This vm has DataStax OpsCenter and the other data science libraries; Jupyter; Zeppelin etc.
+	- VM 2 through 6 are for the the  DataStax Enterprise/Spark/Graph/Solr nodes.
+		- *dse-1* though *dse-5*.
+	- VM 7 is the Flink master and  vm's 8 through 10 are the Flink slaves.
+		- *flink-0* though *flink-38
+	- Should __only__ the DataStaxe Enterprise nodes be required, then the *Total* should be set to to less than 7.
+- Username/Password: The username and password credentials for the VMware vSphere environment.
+- Cluster: The vSphere cluster on which these vm's will run.
+- Host: The vCenter server to connect to.
+- Master_User/Master_Pass: These are the credentials that will configured across all nodes within the cluster. The default username and password for this implementation is:
+	- Username: *admin*
+	- Password: *ADMIN*
+- Software Versions: These are the various tested software versions for these architectures.
 
-
-
+### Configure Vagrant Ansible provisioner variables: __Vagrantfile__
+In order to hand-off to Ansible and allow for coordination between the various roles, the *Vagrantfile* contains the following Ansible specific code:
 
 ```
 groups = {
   "dse" => [],
   "flink" => [],
-  "opscenter" => [],
-  "all_groups:children" => ["dse", "flink", "opscenter"]
+  "admin" => [],
+  "all_groups:children" => ["dse", "flink", "admin"]
 }
-
 ...
 
       if i == Total
@@ -195,25 +211,82 @@ groups = {
           ansible.raw_ssh_args = ['-o ControlPersist=30m']
         end
       end
-
+...
 ```
 
-After the last virtual machine has been brought online, the Ansible Controller will initialize the cluster, based on the site playbook (`site.yml), to execute the following:
+The code above, creates the three separate groups of cluster nodes.
+- *dse*: This group contains that nodes that will run the DataStaxe Enterprise suite.
+- *flink*: This group contains the Flink and Kafka nodes.
+- *admin*: This groups contains the admin node.
+- *all*: This group contains all the sub-groups and therefore all the node.
 
-1. Create the cluster administrator (`admin`) on all virtual machines and enable `SSH` access.
-2. 
+Additionally, the code above, passes dynamically creates *host_vars* for Ansible. This allows the various parameters to be changed in the __init.yml__ file as opposed to hard coding all the host specific characters. Since there is no vSphere Linux orchestration is this configuration, the TCP/IP addresses will be handled by DHCP. This alleviates having to hard code the TCP/IP address and SSH connection specific parameters into a hard-coded *host_vars*.
 
+Some of these host parameters can be optionally changed to adjust the provisioning, e.g.
+- [*ansible.limit*](http://docs.ansible.com/ansible/playbooks_best_practices.html#top-level-playbooks-are-separated-by-role):
+	- Limits the provisioning to a specific subset of hosts.
+	- The default for this configuration is __all__ hosts.
+- [*ansible.verbose*](http://docs.ansible.com/ansible/guide_vagrant.html):
+	- Displays the degree to which ansible-playbook commands are displayed.
+	- The default for this configuration is is to display the basic command and it's result.
+- *ansible.raw_ssh_args*:
+	- These arguments instruct Ansible to apply a list of OpenSSH client options.
+	- The default for this configuration is to persist the SSH configuration for 30 minutes.
 
+A list of the various options that can be used is found [here](https://www.vagrantup.com/docs/provisioning/ansible.html).
 
+### Cluster-wide Ansible Playbook: __site.yml__
+After the last virtual machine has been brought online, the Ansible Controller will initialize the cluster by executing the following:
 
-## Configure the Ansible Cluster-wide variables
+1. Create the cluster administrator on all virtual machines and enable/configure SSH access.
+2. Execute the *dse* (DataStax Enterprise) role on all the members of the `dse` group:
+	- Install the necessary packages required for DataStax Enterprise.
+	- Add the necessary repositories for Oracle Java 8 and DataStax Enterprise.
+	- Install Oracle Java 8.
+	- Install DataStax Enterprise.
+	- Enable Spark, Graph and Solr.
+	- Start DataStax Enterprise.
+3. Execute the *admin* (DataStax OpsCenter) role on the `admin` group:
+	- Install the necessary packages for DataStax OpsCenter.
+	- Add the necessary repositories for Oracle Java 8 and DataStax OpsCenter.
+	- Install Oracle Java 8.
+	- Install DataStax OpsCenter.
+	- Start DataStax OpsCenter.
+4. Execute the *dsbox* (Data Science Tools and Libraries) role on the `admin` group:
+	- Install the necessary programming languages and frameworks:
+		- Ruby
+		- Node.js
+		- Python
+		- R
+		- Maven
+	- Install Spark 1.6.1 to be used as the Spark client.
+	- Install the necessary components to __manually__ install Zeppelin (See Appendix A).
+	- Install Jupyter Notebook with the following kernels.
+		- Python 2
+		- Python 3
+		- Scala 2.10
+		- R
+	- Install R Studio Server.
+	- Install R Studio Shiny Server.
+5. FLNK???
+6. KAFKA???
 
+## Cluster Usage
+### Jupyter
 
+### R Studio Server
 
+### R Studio Shiny Server
 
+### Zeppelin
 
-# Appendix A: Create a "fat" jar for the spark-cassandra-connector
+### FLINK???
 
+### KAFKA???
+
+# Appendix A: Manually Install Zeppelin
+
+# Appendix B: Create a "fat" jar for the spark-cassandra-connector
 
 
 ```

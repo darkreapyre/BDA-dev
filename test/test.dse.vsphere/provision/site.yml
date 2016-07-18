@@ -100,26 +100,16 @@
   roles:
   - dse
 
-# Ansible Host as opcenter
-#- hosts: 127.0.0.1
-#  connection: local
-#  sudo: yes
-#
-#  roles:
-#  - opscenter
-
-# Dedicated Opscenter vm
-- name: Install opscenter node
-  hosts: opscenter
+- name: Install OpsCenter on the admin node
+  hosts: admin
   user: vagrant
   become: True
 
   roles:
-  - opscenter
+  - admin
 
-# Loading zepplein/jupyter on opcenter node
-- name: Configure Data Science Libraries on opcenter node
-  hosts: opscenter
+- name: Configure Data Science Libraries on the admin node
+  hosts: admin
   user: vagrant
   become: True
 

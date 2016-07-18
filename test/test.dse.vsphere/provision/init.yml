@@ -2,7 +2,7 @@
 # Save as init.yml when completed
 # Total number of Virtual Machines to deploy (inluding the Master)
 # e.g. Total: 9
-#Total: 9
+Total: 4
 
 # vSphere username
 # e.g. Username: "administrator@vsphere.local"
@@ -36,10 +36,7 @@ Master_Pass: "ADMIN"
 # Spark Version
 Spark_Version: "1.6.1"
 
-# Java File
-#Java_Version: "openjdk-7-jdk"
-
-# Maven Version <-- Maven 3.3.3 not available as of 7/4/16
+# Maven Version
 Maven_Version: "3.3.9"
 
 # Scala Version

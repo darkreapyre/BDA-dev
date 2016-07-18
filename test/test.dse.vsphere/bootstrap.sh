@@ -2,12 +2,6 @@
 
 echo "Configuring Ansible Control node"
 
-# RUN AS ROOT
-# http://www.itzgeek.com/how-tos/linux/centos-how-tos/install-virtualbox-4-3-on-centos-7-rhel-7.html
-# get the latest repo
-#sudo rpm -Uvh https://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm <-- Issues
-#sudo rpm -Uvh https://linuxlib.us.dell.com/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm <-- Issues
-
 sudo yum -y install epel-release
 sudo yum -y install kernel-devel kernel-headers dkms git curl unzip wget
 sudo yum -y groupinstall "Development Tools"
