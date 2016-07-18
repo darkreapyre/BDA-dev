@@ -19,11 +19,11 @@ This documnet further details some of the additional processes and tools used in
 
 ## Base Configuration Overview
 ### Requirements
-The following are the basic components needed to start. 
+The following are the basic components needed to start.
+
 1. A working vSphere 6.0 environment
 2. Vagrant 1.8.4
-3. Vagrant Plugins:
-	- __vagrant-vsphere__
+3. vagrant-vsphere Plugin
 4. Ubuntu 14.04 (Trusty)
 5. DHCP server on the subnet that will the virtual machines.
 
