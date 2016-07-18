@@ -1,0 +1,5 @@
+# Hadoop masters list
+
+{% for host in groups['masters'] %}
+{{ host }}
+{% endfor %}

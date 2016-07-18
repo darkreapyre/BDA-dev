@@ -1,0 +1,48 @@
+---
+- name: Download spark
+  get_url: url=http://www.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.6.tgz dest=/opt/spark-{{ spark_version }}-bin-hadoop2.6.tgz
+
+- name: Extract spark archive 
+  unarchive:
+    src: /opt/spark-{{ spark_version }}-bin-hadoop2.6.tgz
+    dest: /opt
+    creates: /opt/spark-{{ spark_version }}-bin-hadoop2.6
+    copy: no
+    owner: "{{ cluster_user }}"
+    group: "{{ cluster_user }}"
+
+- name: Create Spark current version symbolic link and assign ownsership
+  file: path=/opt/spark src=/opt/spark-{{ spark_version }}-bin-hadoop2.6 state=link owner={{ cluster_user }} group={{ cluster_user }}
+
+- name: Set SPARK_HOME in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'export SPARK_HOME={{ spark_home }}'
+    regexp: '^(# *)?export SPARK_HOME='
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Add PATH to SPARK_HOME/bin in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin # SPARK-BIN-PATH'
+    regexp: '# SPARK-BIN-PATH'
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+#- name: Add PYTHONPATH to .bashrc (HARD CODED)
+##  shell: PY4J=$(basename $(find $SPARK_HOME/python/lib/*.zip))
+#  shell: echo "export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.9-src.zip:$PYTHONPATH" >> /home/{{ cluster_user }}/.bashrc
+#  become: yes
+#  become_user: {{ cluster_user }}
+
+- include: masternode.yml
+  when: '"masters" in group_names'
+
+#- name: Export spark home (Manual)
+#  shell: echo "export SPARK_HOME=/opt/spark" >> /home/{{ cluster_user }}/.bashrc
+#  shell: echo "export PATH=$PATH:$SPARK_HOME/bin" >> /home/{{ cluster_user }}/.bashrc
+#  shell: PY4J=$(basename $(find $SPARK_HOME/python/lib/*.zip))
+#  shell: echo "export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/$PY4J:$PYTHONPATH" >> /home/{{ cluster_user }}/.bashrc
+#  become: yes
+#  become_user: "{{ cluster_user }}"

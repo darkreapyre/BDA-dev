@@ -1,0 +1,5 @@
+# Hadoop slaves list
+
+{% for host in groups['slaves'] %}
+{{ host }}
+{% endfor %}

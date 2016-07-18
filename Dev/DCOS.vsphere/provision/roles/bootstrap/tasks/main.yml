@@ -1,0 +1,3 @@
+---
+- name: Download the DC/OS Installer to bootstrap
+  get_url: url={{ dcos_url }}/dcos_generate_config.sh dest=/home/{{ cluster_user }}/dcos_generate_config.sh

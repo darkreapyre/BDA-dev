@@ -1,0 +1,4 @@
+hdfs_replication: 1
+hdfs_namenode_name_dir: /var/lib/hdfs/name
+hdfs_namenode_checkpoint_dir: /var/lib/hdfs/checkpoint
+hdfs_datanode_data_dir: /var/lib/hdfs/data

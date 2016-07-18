@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+
+R_REPO="deb http://cran.rstudio.com/bin/linux/ubuntu vivid/"
+HOME=/home/{{ cluster_user }}
+BASHRC=$HOME/.bashrc
+TEST_HELPER_GIT=https://github.com/hpec/test_helper.git
+APPS_DIR=$HOME/apps
+TEST_HELPER_HOME=$APPS_DIR/test_helper
+RISE_GIT=https://github.com/damianavila/RISE.git
+RISE_HOME=$APPS_DIR/rise
+SPARK_KERNEL_HOME=/opt
+SPARK_KERNEL_FILE=spark-kernel-0.1.5-SNAPSHOT.tar.gz
+SCALA_KERNEL_PATH=$HOME/.local/share/jupyter/kernels/scala
+TEMP_DIR=/tmp
+JUPYTER_EXT_GIT=https://github.com/ipython-contrib/IPython-notebook-extensions.git
+JUPYTER_EXT_HOME=$APPS_DIR/test_helper
+RSTUDIO_SERVER_FILE=rstudio-server-0.99.879-amd64.deb
+RSTUDIO_SERVER_URL="https://download2.rstudio.org/$RSTUDIO_SERVER_FILE"
+
+# Install R
+sudo add-apt-repository "$R_REPO"
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E084DAB9
+sudo add-apt-repository -y ppa:marutter/rdev
+sudo apt-get -y update
+sudo apt-get -y upgrade
+sudo apt-get -y install r-base r-base-dev gdebi gdebi-core
+sudo apt-get -y clean
+sudo chmod 777 /usr/local/lib/R/site-library
+
+# Install Jupyter
+sudo pip3 install jupyter
+sudo pip install jupyter
+sudo python2 -m ipykernel install
+sudo su {{ cluster_user }} -c "jupyter notebook --generate-config"
+sudo su {{ cluster_user }} -c "cat > $HOME/.jupyter/jupyter_notebook_config.py <<EOF
+c.NotebookApp.ip = '*'
+c.NotebookApp.port = 8001
+c.NotebookApp.open_browser = False
+EOF"
+
+sudo chown -R {{ cluster_user }}:{{ cluster_user }} $HOME/.local 
+sudo apt-get -y install texlive texlive-latex-extra pandoc
+
+# Install test_helper
+if ! [ -d $TEST_HELPER_HOME ]; then
+  sudo git clone $TEST_HELPER_GIT $TEST_HELPER_HOME
+fi
+cd $TEST_HELPER_HOME
+sudo python setup.py install
+
+# Install RISE
+if ! [ -d $RISE_HOME ]; then
+  sudo git clone $RISE_GIT $RISE_HOME
+fi
+cd $RISE_HOME
+sudo su admin -c "python setup.py install"
+
+# Install Spark-kernel
+if [ -z "$SPARK_HOME" ]; then
+  export SPARK_HOME=/opt/spark
+fi
+cd $SPARK_KERNEL_HOME
+sudo cp $APPS_DIR/$SPARK_KERNEL_FILE .
+sudo tar xzvf $SPARK_KERNEL_FILE
+sudo chown -R {{ cluster_user }}:{{ cluster_user}} spark-kernel
+sudo rm $SPARK_KERNEL_FILE
+sudo -u {{ cluster_user }} mkdir -p $SCALA_KERNEL_PATH
+sudo -u {{ cluster_user }} ln -s $SPARK_KERNEL_HOME/spark-kernel/logo-64x64.png $SCALA_KERNEL_PATH/logo-64x64.png
+sudo su {{ cluster_user }} -c 'cat > /home/{{ cluster_user }}/.local/share/jupyter/kernels/scala/kernel.json <<EOF
+{
+  "resources_dir": "/home/{{ cluster_user }}/.local/share/jupyter/kernels/scala/",
+  "display_name": "Scala 2.10 (Spark)",
+  "language_info": { "name": "scala" },
+  "argv": [
+    "/opt/spark-kernel/bin/spark-kernel",
+    "--profile",
+    "{connection_file}"
+  ],
+  "codemirror_mode": "scala",
+  "env": {
+    "SPARK_OPTS": "--master=spark://{{ groups['masters'][0] }}:7077 --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=trace",
+    "MAX_INTERPRETER_THREADS": "16",
+    "SPARK_CONFIGURATION": "spark.cores.max=4",
+    "CAPTURE_STANDARD_OUT": "true",
+    "CAPTURE_STANDARD_ERR": "true",
+    "SEND_EMPTY_OUTPUT": "false",
+    "SPARK_HOME": "/opt/spark",
+    "PYTHONPATH": "/opt/spark/python:/opt/spark/python/lib/py4j-0.8.2.1-src.zip"
+ }
+}
+EOF'
+
+# Install IRkernel
+sudo R -e "install.packages(c('rzmq','repr','IRkernel','IRdisplay','rmarkdown','knitr'), repos = c('http://irkernel.github.io/', 'http://cran.rstudio.com/'))"
+sudo su {{ cluster_user }} -c "R -e 'IRkernel::installspec()' "
+
+# Install Jupyter extensions
+sudo pip2 install psutil pyyaml
+sudo pip3 install psutil pyyaml
+if ! [ -d $JUPYTER_EXT_HOME ]; then
+  sudo git clone $JUPYTER_EXT_GIT $JUPYTER_EXT_HOME
+fi
+cd $JUPYTER_EXT_HOME
+sudo su {{ cluster_user }} -c "python setup.py install"
+
+# Install RStudio Server
+sudo apt-get -y install gdebi-core
+if ! [ -f $RSTUDIO_SERVER_FILE ]; then
+  sudo wget -q -P $APPS_DIR -c $RSTUDIO_SERVER_URL
+fi
+sudo gdebi -n $APPS_DIR/$RSTUDIO_SERVER_FILE
+sudo apt-get clean
+
+# Install Shiny
+sudo wget https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION -O "$APPS_DIR/version.txt"
+VERSION=`cat $APPS_DIR/version.txt`
+sudo wget "https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/shiny-server-$VERSION-amd64.deb" -O $APPS_DIR/Shiny_Server-latest.deb
+sudo gdebi -n $APPS_DIR/Shiny_Server-latest.deb
+sudo wget http://cran.r-project.org/src/contrib/Archive/Rcpp/Rcpp_0.10.5.tar.gz -O $APPS_DIR/Rcpp_0.10.5.tar.gz
+sudo R CMD INSTALL $APPS_DIR/Rcpp_0.10.5.tar.gz
+sudo R -e "install.packages(c('shiny','rmarkdown','knitr'), repos='http://cran.rstudio.com/')"
+sudo cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/
