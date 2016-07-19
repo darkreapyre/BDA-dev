@@ -259,7 +259,7 @@ After the last virtual machine has been brought online, the Ansible Controller w
 		- Python
 		- R
 		- Maven
-	- Install Spark 1.6.1 to be used as the Spark client.
+	- Install Spark 1.6.1 to be used only as the Spark client.
 	- Install the necessary components to __manually__ install Zeppelin (See Appendix A).
 	- Install Jupyter Notebook with the following kernels.
 		- Python 2
