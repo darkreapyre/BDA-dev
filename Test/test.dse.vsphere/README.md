@@ -285,7 +285,7 @@ After the last virtual machine has been brought online, the Ansible Controller w
 ### KAFKA???
 
 # Appendix A: Manually Install Zeppelin
-Since building Zeppelin can take a while, it is recommended to manually build it, if required. The architecture deployment will already have cloned the project onto the `admin` node, in the `/home/admin/apps/` directory. The following build steps will also include Python and R support via PySpark and SparkR:
+Since building Zeppelin can take a while, it is recommended to manually build it, if required. The architecture deployment will already have cloned the project onto the `admin` node, in the `/home/admin/apps/` directory. The following build steps will also include `Python` and `R` support via `PySpark` and `SparkR` respectivley:
 ```sh
 $ cd /home/admin/apps/incubator-zeppelin
 mvn clean package -Pspark-1.6 -Ppyspark -Phadoop-2.6 -Psparkr -DskipTests
