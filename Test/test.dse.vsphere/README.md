@@ -17,7 +17,7 @@ This document details the process of setting up an ansible control node with `Va
 
 This documnet further details some of the additional processes and tools used in order to fully leverage the architecture, 
 
-## Base Configuration Overview
+## Configuration Overview
 ### Requirements
 The following are the basic components needed to start.
 
@@ -84,11 +84,11 @@ A dedicated Ansible Control node is required to load and execute the Ansible dep
 To launch the Ansible Control node without starting the cluster deployment:
 
 1. Edit the `bootstrap.sh` file in the root directory, and comment out the last line as follows:
-```
+```sh
 #vagrant up --no-parallel
 ```
 2. Start the Ansible Control node by typing:
-```
+```sh
 $ vagrant up
 ```
 
@@ -278,17 +278,47 @@ After the last virtual machine has been brought online, the Ansible Controller w
 
 ### R Studio Shiny Server
 
-### Zeppelin
+### Zeppelin (see Appendix A)
 
 ### FLINK???
 
 ### KAFKA???
 
 # Appendix A: Manually Install Zeppelin
+Since building Zeppelin can take a while, it is recommended to manually build it, if required. The architecture deployment will already have cloned the project onto the `admin` node, in the `/home/admin/apps/` directory. The following build steps will also include Python and R support via PySpark and SparkR:
+```sh
+$ cd /home/admin/apps/incubator-zeppelin
+mvn clean package -Pspark-1.6 -Ppyspark -Phadoop-2.6 -Psparkr -DskipTests
+./bin/zeppelin-daemon.sh start
+```
 
 # Appendix B: Create a "fat" jar for the spark-cassandra-connector
+## Background
+In order to connect Spark and Cassandra together, the [`spark-Cassandra-connector`](https://github.com/datastax/spark-cassandra-connector), is required. In the majority of use cases, like the `PySpark` Shell, `Jupyter` (using the Python Kernel) and `zeppelin` (using the Spark or PySpark Interpreter), using the Spark Package with the `--packages` command works. This however is not the case when using `spark-shel`, `spark-submit` or the `Scala` Kernel/Interpreter respectively. 
 
+The reason is that Spark comes pre-installed with [Guava 14.0.1](http://mvnrepository.com/artifact/org.apache.spark/spark-core_2.10/1.6.1), while the connector uses [Guava 16.0.1](http://mvnrepository.com/artifact/com.datastax.spark/spark-cassandra-connector_2.10/1.6.0) and when trying to leverage the connector, we get the following error:
+```sh
+Caused by: java.lang.IllegalStateException: Detected Guava issue #1635 which indicates that a version of Guava less than 16.01 is in use.  This introduces codec resolution issues and potentially other incompatibility issues in the driver.  Please upgrade to Guava 16.01 or later.
+```
 
+When searching for a solution, there are a number of references to shading the spark-cassandra-connector's version of Guava. (A very good explanation of shading in this context, can be found [here](https://hadoopist.wordpress.com/2016/05/22/how-to-connect-cassandra-and-spark/). Unfortunately none of the solutions that were found, actually worked. Therefore, the following details how to make the connector work within the context of this architecture.
+
+## Proceedure for building the assembly jar
+In order to compile the assembly or "fat" jar, we need to do the following:
+1. Download and install the Scala build tool, `sbt` On the *admin* node.
+```sh
+$ echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
+$ sudo apt-get update
+$ sudo apt-get install sbt
+```
+2. Download the source for the spark-Cassandra-connector and checkout the latest release, branch b1.6.
+```sh
+$ git clone https://github.com/datastax/spark-cassandra-connector.git
+$ cd spark-Cassandra-connector
+$ git checkout b.1.6
+```
+3. Navigate to the `project` directory and open the `Settings.scala` file and navigate to the following lines.
 ```
 ...
 
@@ -300,8 +330,7 @@ After the last virtual machine has been brought online, the Ansible Controller w
 ...
 
 ```
-
-
+4. Insert the following lines and save the file.
 ```
 ...
 
@@ -319,3 +348,18 @@ After the last virtual machine has been brought online, the Ansible Controller w
 ...
 
 ```
+5. Still within the `project` directory, open the `plugins.sbt` and add the following to the end of the file bad save it.
+```
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.3")
+```
+6. Navigate to the `spark-cassandra-connector` directory and execute the following to build the assembly jar.
+```sh
+$ sbt assembly
+```
+7. The assembly jar is will be generated to to the following directory:
+```sh
+spark-cassandra-connector/target/scala-{binary.version}/
+```
+
+## Using the assembly jar
+In order to use the spar-cassandra-connector, simply add the `--jars /path/to/fat/jar/spark-cassandra-connector-1.6.0_2.19.jar` to the `spark-submit` or `spark-shell` command to shade out Guava 16 and use the version provided with spark.
