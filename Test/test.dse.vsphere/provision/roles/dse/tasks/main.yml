@@ -17,6 +17,7 @@
   - sysstat
   - python-software-properties
   - libfontconfig
+  - python-pip
 
 - name: Add Oracle Java Repository
   shell: add-apt-repository -y ppa:webupd8team/java

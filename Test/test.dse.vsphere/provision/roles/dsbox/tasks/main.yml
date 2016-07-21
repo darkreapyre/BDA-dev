@@ -3,7 +3,8 @@
 
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#!!!!!!!! MAKE SURE THAT PYTHON AND PIP ARE INSTALLED!!!!!!!!!
+#!!!!!!!! MAKE SURE THAT SCALA AND PIP ARE INSTALLED!!!!!!!!!
+#!!!!!!!!! zmq jinja etc
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -11,7 +12,7 @@
 #- include: nodejs.yml
 #- include: maven.yml
 #- include: python-addons.yml
-#- include: r.yml #<-- Probably best to stick with the R scripts
+#- include: r.yml
 #--------------------------------------------------------------------------------------------------------
 
 # Configure the dependencies for Jupyter/Zeppelin IDE and the libraries for Data Science
@@ -42,22 +43,21 @@
 - name: Create Spark current version symbolic link and assign ownsership
   file: path=/home/{{ cluster_user }}/spark src=/home/{{ cluster_user }}/apps/spark-{{ spark_version }}-bin-hadoop2.6 state=link owner={{ cluster_user }} group={{ cluster_user }}
 
-# The following may not be needed because the admin node is a spark driver, not a spark master
-#- name: Set SPARK_HOME in .bashrc
-#  lineinfile:
-#    dest: '/home/{{ cluster_user }}/.bashrc'
-#    line: 'export SPARK_HOME=/home/{{ cluster_user }}/apps/spark'
-#    regexp: '^(# *)?export SPARK_HOME='
-#  become: yes
-#  become_user: "{{ cluster_user }}"
+- name: Set SPARK_HOME in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'export SPARK_HOME=/home/{{ cluster_user }}/apps/spark'
+    regexp: '^(# *)?export SPARK_HOME='
+  become: yes
+  become_user: "{{ cluster_user }}"
 
-#- name: Add PATH to SPARK_HOME/bin in .bashrc
-#  lineinfile:
-#    dest: '/home/{{ cluster_user }}/.bashrc'
-#    line: 'export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin # SPARK-BIN-PATH'
-#    regexp: '# SPARK-BIN-PATH'
-#  become: yes
-#  become_user: "{{ cluster_user }}"
+- name: Add PATH to SPARK_HOME/bin in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin # SPARK-BIN-PATH'
+    regexp: '# SPARK-BIN-PATH'
+  become: yes
+  become_user: "{{ cluster_user }}"
 
 - name: Create scripts directory
   file: path=/home/{{ cluster_user }}/scripts state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=0777 recurse=yes
@@ -74,10 +74,9 @@
     - {src: "jupyter-extensions.sh.j2", dest: "/home/{{ cluster_user }}/scripts/jupyter-extensions.sh"}
     - {src: "rstudio-server.sh.j2", dest: "/home/{{ cluster_user }}/scripts/rstudio-server.sh"}
     - {src: "shiny-server.sh.j2", dest: "/home/{{ cluster_user }}/scripts/shiny-server.sh"}
-    - {src: "zeppelin.sh.j2", dest: "/home/{{ cluster_user }}/scripts/zeppelin.sh"}
     - {src: "start-pyspark-notebook.sh.j2", dest: "/home/{{ cluster_user }}/scripts/start-pyspark-notebook.sh"}
     - {src: "sparkR-start.R.j2", dest: "/home/{{ cluster_user }}/scripts/sparkR-start.R"}
-#    - {src: "zeppelin-env.sh.j2", dest: "/home/{{ cluster_user}}/apps/incubator-zeppelin/conf/zeppelin-env.sh"}
+    - {src: "zeppelin-env.sh.j2", dest: "/home/{{ cluster_user}}/apps/incubator-zeppelin/conf/zeppelin-env.sh"}
   
 #- name: Install R (from scripts)
 #  shell: /home/{{ cluster_user }}/scripts/R.sh
