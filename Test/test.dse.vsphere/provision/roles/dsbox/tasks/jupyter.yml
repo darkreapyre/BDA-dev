@@ -2,26 +2,26 @@
 - name: Create notebooks directory
   file:
     state: directory
-    dest: "{{ipython_notebook_dir}}"
-    owner: "{{ipython_user}}"
-    group: "{{ipython_user}}"
+    dest: /home/{{ cluster_user }}/notebooks
+    owner: "{{ cluster_user }}"
+    group: "{{ cluster_user }}"
 
 - name: Create default notebook profile
   sudo: yes
   file:
-    owner: "{{ipython_user}}"
-    group: "{{ipython_user}}"
+    owner: "{{ cluster_user }}"
+    group: "{{ cluster_user }}"
     state: directory
     recurse: yes
-    dest: /home/{{ipython_user}}/.ipython/profile_default
+    dest: /home/{{ cluster_user }}/.ipython/profile_default
 
 - name: Configure default notebook
   sudo: yes
   template:
-    owner: "{{ipython_user}}"
-    group: "{{ipython_user}}"
+    owner: "{{ cluster_user }}"
+    group: "{{ cluster_user }}"
     src: ipynb_conf.py.j2
-    dest: /home/{{ipython_user}}/.ipython/profile_default/ipython_notebook_config.py
+    dest: /home/{{ cluster_user }}/.ipython/profile_default/ipython_notebook_config.py
   notify: restart ipython-notebook
 
 - name: Configure upstart script

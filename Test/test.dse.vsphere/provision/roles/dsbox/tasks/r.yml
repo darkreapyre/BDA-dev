@@ -16,6 +16,9 @@
 
 - name: Install R
   apt: pkg=r-base state=present
+  with_items:
+    - r-base
+    - r-base-dev
 
 - name: openssl and libcurl required for R devtools package
   apt: pkg={{item}} state=present
@@ -24,14 +27,20 @@
     - libcurl4-openssl-dev
 
 # knitr will also pull in the `evaluate` R package as a dependency
-- name: Install R packages required for the R interpreter. This may take a while.
+- name: Install R packages required for the R interpreter/kernel
   shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs=c('{{item}}'), repos=c('{{r_packages_repos}}'))"
   with_items:
     - knitr
     - devtools
 
-- name: Install rCharts (requires devtools first).
+- name: Install rCharts
   shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('rCharts' %in% installed.packages()[,'Package'])) devtools::install_github('rCharts', 'ramnathv')"
+
+- name: Install IRkernel package recommended for the R interpreter
+  shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('IRkernel' %in% installed.packages()[,'Package'])) devtools::install_github('IRkernel')"
+
+- name: Install IRdisplay package recommended for the R interpreter
+  shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('repr' %in% installed.packages()[,'Package'])) devtools::install_github('IRdisplay')"
 
 - name: Install R repr package recommended for the R interpreter display system (requires devtools first).
   shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('repr' %in% installed.packages()[,'Package'])) devtools::install_github('IRkernel/repr')"
@@ -40,6 +49,8 @@
   shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs=c('{{item}}'), repos=c('{{r_packages_repos}}'))"
   with_items:
     - ggplot2
+    - rzmq
+    - rmarkdown
     - googleVis
     - mplot
     - htmltools

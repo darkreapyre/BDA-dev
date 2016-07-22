@@ -1,6 +1,6 @@
 ---
 - name: Install Python Dependencies
-  apt: pkg={{ item }} state=latest
+  apt: pkg={{ item }} state=present
   with_items:
     - python-pip
     - python-matplotlib
@@ -22,10 +22,11 @@
     - gfortran
     - libxml2-dev
     - libxslt1-dev
+    - libfontconfig
   become: True
 
 - name: Install Pip Dependencies
-  pip: name={{ item }} state=latest
+  pip: name={{ item }} state=present
   with_items:
     - ipython
     - pyzmq
