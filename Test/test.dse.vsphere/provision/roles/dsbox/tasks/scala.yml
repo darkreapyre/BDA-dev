@@ -1,0 +1,7 @@
+---
+- name: Download scala
+  get_url: url=http://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version}}.deb dest=/home/{{ cluster_user }}/apps/scala-{{ scala_version }}.deb
+
+- name: Install scala
+  apt: deb=/home/{{ cluster_user }}/apps/scala-{{ scala_version }}.deb
+  become: yes

@@ -40,10 +40,10 @@ Spark_Version: "1.6.1"
 Maven_Version: "3.3.9"
 
 # Scala Version
-#Scala_Version: "2.10.5"
+Scala_Version: "2.10.5"
 
 # TensorFlow Version
-#TFlow_Version: "0.8.0"
+TFlow_Version: "0.9.0"
 
 # DataStax Enterprise version
 DSE_Version: "5.0.x-1"

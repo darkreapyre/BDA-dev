@@ -1,0 +1,62 @@
+---
+- name: Install Python Dependencies
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - python-pip
+    - python-matplotlib
+    - python-scipy
+    - python-numpy
+    - python-pandas
+    - texlive
+    - texlive-latex-extra
+    - pandoc
+    - psutil
+    - pyyaml
+    - python-dev
+    - libreadline-dev
+    - python-psycopg2
+    - python-mpltoolkits.basemap
+    - libsqlite3-dev
+    - libproj-dev
+    - libgdal-dev
+    - gfortran
+    - libxml2-dev
+    - libxslt1-dev
+  become: True
+
+- name: Install Pip Dependencies
+  pip: name={{ item }} state=latest
+  with_items:
+    - ipython
+    - pyzmq
+    - jinja2
+    - tornado
+    - pygments
+    - jsonschema
+    - mpld3
+    - seaborn
+    - nltk
+    - pyzipcode
+    - census
+    - fiona
+    - descartes
+    - networkx
+    - pymc
+    - gensim
+    - lifelines
+    - YURL
+    - lxml
+    - matplotlib-venn
+    - scikit-learn
+    - ua_parser
+    - osmapi
+    - overpass
+    - Theano
+    - spark-sklearn
+    - sympy
+    - keras
+  become: yes
+
+- name: Install TensorFlow
+  pip: name=https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-{{ tflow_version }}-cp27-none-linux_x86_64.whl state=present
+  become: yes

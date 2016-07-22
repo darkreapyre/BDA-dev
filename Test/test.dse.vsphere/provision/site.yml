@@ -95,7 +95,7 @@
 - name: Install and Confiugre Datastax Enterprise
   hosts: dse
   user: vagrant
-  become: True
+  become: yes
   
   roles:
   - dse
@@ -103,15 +103,15 @@
 - name: Install OpsCenter on the admin node
   hosts: admin
   user: vagrant
-  become: True
+  become: yes
 
   roles:
   - admin
 
 - name: Configure Data Science Libraries on the admin node
   hosts: admin
-  user: vagrant
-  become: True
+  become: yes
+  become_user: {{ cluster_user }}
 
   roles:
     - dsbox

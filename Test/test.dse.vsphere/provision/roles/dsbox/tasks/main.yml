@@ -1,20 +1,4 @@
 ---
-# If it's determined that "opcenter" will be the zeppelin host --> Ansible scripts from zepplin dev box
-
-
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#!!!!!!!! MAKE SURE THAT SCALA AND PIP ARE INSTALLED!!!!!!!!!
-#!!!!!!!!! zmq jinja etc
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-#- include: ruby.yml
-#- include: nodejs.yml
-#- include: maven.yml
-#- include: python-addons.yml
-#- include: r.yml
-#--------------------------------------------------------------------------------------------------------
-
 # Configure the dependencies for Jupyter/Zeppelin IDE and the libraries for Data Science
 - name: Create the Apps directory
   file: path=/home/{{ cluster_user }}/apps state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=0777 recurse=yes
@@ -43,26 +27,31 @@
 - name: Create Spark current version symbolic link and assign ownsership
   file: path=/home/{{ cluster_user }}/spark src=/home/{{ cluster_user }}/apps/spark-{{ spark_version }}-bin-hadoop2.6 state=link owner={{ cluster_user }} group={{ cluster_user }}
 
-- name: Set SPARK_HOME in .bashrc
-  lineinfile:
-    dest: '/home/{{ cluster_user }}/.bashrc'
-    line: 'export SPARK_HOME=/home/{{ cluster_user }}/apps/spark'
-    regexp: '^(# *)?export SPARK_HOME='
-  become: yes
-  become_user: "{{ cluster_user }}"
-
-- name: Add PATH to SPARK_HOME/bin in .bashrc
-  lineinfile:
-    dest: '/home/{{ cluster_user }}/.bashrc'
-    line: 'export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin # SPARK-BIN-PATH'
-    regexp: '# SPARK-BIN-PATH'
-  become: yes
-  become_user: "{{ cluster_user }}"
-
 - name: Create scripts directory
   file: path=/home/{{ cluster_user }}/scripts state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=0777 recurse=yes
 
-- name: Copy deployment scripts
+#########################################################################################################################################
+#####                          Code Block Just in case the old "manual scripts method" is required                                  #####
+#########################################################################################################################################
+
+#- name: Set SPARK_HOME in .bashrc
+#  lineinfile:
+#    dest: '/home/{{ cluster_user }}/.bashrc'
+#    line: 'export SPARK_HOME=/home/{{ cluster_user }}/apps/spark'
+#    regexp: '^(# *)?export SPARK_HOME='
+#  become: yes
+#  become_user: "{{ cluster_user }}"
+
+#- name: Add PATH to SPARK_HOME/bin in .bashrc
+#  lineinfile:
+#    dest: '/home/{{ cluster_user }}/.bashrc'
+#    line: 'export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin # SPARK-BIN-PATH'
+#    regexp: '# SPARK-BIN-PATH'
+#  become: yes
+#  become_user: "{{ cluster_user }}"
+
+
+- name: Copy deployment scripts (JUST IN CASE)
   template: src={{ item.src }} dest={{ item.dest }} owner={{ cluster_user }} group={{ cluster_user }} mode=0777
   with_items:
     - {src: "R.sh.j2", dest: "/home/{{ cluster_user }}/scripts/R.sh"}
@@ -123,3 +112,14 @@
 #  shell: /home/{{ cluster_user }}/scripts/shiny-server.sh
 #  become: yes
 #  become_user: "{{ cluster_user }}"
+
+#########################################################################################################################################
+
+
+
+- include: python.yml
+- include: scala.yml
+- include: ruby.yml
+- include: nodejs.yml
+- include: maven.yml
+- include: r.yml
