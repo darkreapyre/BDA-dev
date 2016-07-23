@@ -2,7 +2,18 @@
 - name: Install Python Dependencies
   apt: pkg={{ item }} state=present
   with_items:
+    - build-essential
     - python-pip
+    - python-dev
+    - python3-pip
+    - python3-dev
+    - libzmq3
+    - libzmq3-dev
+    - g++
+    - libopenblas-dev
+    - libtiff5-dev
+    - libjpeg8-dev
+    - zlib1g-dev
     - python-matplotlib
     - python-scipy
     - python-numpy
@@ -12,50 +23,44 @@
     - pandoc
     - psutil
     - pyyaml
-    - python-dev
     - libreadline-dev
     - python-psycopg2
     - python-mpltoolkits.basemap
-    - libsqlite3-dev
-    - libproj-dev
-    - libgdal-dev
-    - gfortran
-    - libxml2-dev
-    - libxslt1-dev
     - libfontconfig
   become: True
 
 - name: Install Pip Dependencies
   pip: name={{ item }} state=present
   with_items:
-    - ipython
+    - jupyter
     - pyzmq
     - jinja2
     - tornado
     - pygments
     - jsonschema
     - mpld3
-    - seaborn
-    - nltk
-    - pyzipcode
-    - census
-    - fiona
-    - descartes
+#    - seaborn
+#    - nltk
+#    - pyzipcode
+#    - census
+#    - fiona
+#    - descartes
     - networkx
-    - pymc
-    - gensim
-    - lifelines
-    - YURL
-    - lxml
-    - matplotlib-venn
+#    - pymc
+#    - gensim
+#    - lifelines
+#    - YURL
+#    - lxml
+#    - matplotlib-venn
     - scikit-learn
-    - ua_parser
-    - osmapi
-    - overpass
+#    - ua_parser
+#    - osmapi
+#    - overpass
     - Theano
     - spark-sklearn
     - sympy
     - keras
+    - cassandra-driver
   become: yes
 
 - name: Install TensorFlow

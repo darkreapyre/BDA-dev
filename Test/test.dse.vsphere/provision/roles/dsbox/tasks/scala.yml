@@ -1,4 +1,14 @@
 ---
+- name: Add scala-sbt Repository
+  command: echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+  become: yes 
+- name: Add scala-sbt public key
+  apt_key:
+    id: 642AC823
+    keyserver: keyserver.ubuntu.com:80
+    state: present
+  become: yes
+
 - name: Download scala
   get_url: url=http://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version}}.deb dest=/home/{{ cluster_user }}/apps/scala-{{ scala_version }}.deb
 
