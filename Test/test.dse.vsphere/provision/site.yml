@@ -3,7 +3,7 @@
   tasks:
     - name: Create Admins group
       group: name=admin state=present
-      sudo: yes
+      become: yes
 
     - name: Create Admin user on all nodes
       user: name={{ cluster_user }}
@@ -16,15 +16,15 @@
             generate_ssh_key=yes
             ssh_key_bits=2048
             state=present
-      sudo: yes
+      become: yes
 
     - name: Add Admin user to sudoers
       lineinfile: "dest=/etc/sudoers insertafter=EOF line='{{ cluster_user }} ALL=(ALL) NOPASSWD: ALL' regexp='{{ cluster_user }} ALL=(ALL) NOPASSWD: ALL' state=present"
-      sudo: yes
+      become: yes
 
     - name: Ensure Admin user ssh directory exists
       file: dest=/home/{{ cluster_user }}/.ssh owner={{ cluster_user }} group={{ cluster_user }} state=directory mode=0700
-      sudo: yes
+      become: yes
       
     - name: Disable strict host checking for the Admin user
       lineinfile: create=yes
@@ -35,17 +35,17 @@
                   group={{ cluster_user }}
                   mode=0644
       become: yes
-      become_user: "{{ cluster_user }}"
+#      become_user: "{{ cluster_user }}"
     
     - name: Remove localhost IP address
       lineinfile: dest=/etc/hosts regexp='127.0.1.1' state=absent
-      sudo: yes
+      become: yes
 
     - name: Build hosts file on all servers
       lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
       when: hostvars[item].ansible_default_ipv4.address is defined
       with_items: groups['all']
-      sudo: yes
+      become: yes
     
 - hosts: all[0]
   tasks:
@@ -53,7 +53,7 @@
     - name: Build hosts file on local machine
       local_action: lineinfile dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
       with_items: groups['all']
-      sudo: yes
+      become: yes
 
     - name: Setup passwordless ssh
       shell: /bin/cat /home/{{ cluster_user }}/.ssh/id_rsa.pub >> /home/{{ cluster_user }}/.ssh/authorized_keys
@@ -90,7 +90,7 @@
         - id_rsa.pub
         - authorized_keys
       become: yes
-      become_user: "{{ cluster_user }}"
+#      become_user: "{{ cluster_user }}"
 
 - name: Install and Confiugre Datastax Enterprise
   hosts: dse
@@ -99,6 +99,12 @@
   
   roles:
   - dse
+
+- hosts: all[1]
+  tasks:
+    - name: Get Spark Master address
+      command: dse client-tool spark master-address
+      register: master_address
 
 - name: Install OpsCenter on the admin node
   hosts: admin
@@ -111,7 +117,11 @@
 - name: Configure Data Science Libraries on the admin node
   hosts: admin
   become: yes
-  become_user: {{ cluster_user }}
+#  become_user: {{ cluster_user }}
 
   roles:
     - dsbox
+  
+  vars:
+#    master: "{{ master_address.stdout }}"
+    master: "blahblahblah"  #<-- for testing stand alone "admin"" install

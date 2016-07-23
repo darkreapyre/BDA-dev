@@ -6,31 +6,42 @@
     owner: "{{ cluster_user }}"
     group: "{{ cluster_user }}"
 
-- name: Create default notebook profile
-  sudo: yes
-  file:
-    owner: "{{ cluster_user }}"
-    group: "{{ cluster_user }}"
-    state: directory
-    recurse: yes
-    dest: /home/{{ cluster_user }}/.ipython/profile_default
+- name: Install Jupyter for Python3
+  pip: name=jupyter executable=pip3
 
-- name: Configure default notebook
-  sudo: yes
+- name: Install Jupyter for Python2
+  pip: name=jupyter
+
+- name: Install Python2 kernel
+  command: python2 -m ipykernel install
+
+- name: Generate notebook config
+  command: jupyter notebook --generate-config
+  become: yes
+  become_user: "{{ cluster_user }}"
+  become_method: su
+
+- name: Create Jupyter default config
   template:
-    owner: "{{ cluster_user }}"
-    group: "{{ cluster_user }}"
-    src: ipynb_conf.py.j2
-    dest: /home/{{ cluster_user }}/.ipython/profile_default/ipython_notebook_config.py
-  notify: restart ipython-notebook
+    src=jupyter_notebook_config.py.j2
+    dest=/home/{{ cluster_user }}/.jupyter/jupyter_notebook_config.py
+    owner={{ cluster_user }}
+    group={{ cluster_user }}
+#  become: yes
+#  become_user: "{{ cluster_user }}"
+#  become_method: su
 
-- name: Configure upstart script
-  template:
-    src: upstart.conf.j2
-    dest: /etc/init/ipython-notebook.conf
-  notify: restart ipython-notebook
+- name: Disable notebook warnings
+  template: src=disable-warning.py.j2 dest=/home/{{ cluster_user }}/.ipython/profile_default/startup/disable-warning.py
 
-- include: nbextensions.yml
-
-- name: Start Jupyter
-  service: name=ipython-notebook state=started
+# The following is still TODO
+#- name: Configure upstart script
+#  template:
+#    src: upstart.conf.j2
+#    dest: /etc/init/ipython-notebook.conf
+#  notify: restart ipython-notebook
+#
+#- include: nbextensions.yml
+#
+#- name: Start Jupyter
+#  service: name=ipython-notebook state=started

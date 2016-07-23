@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # The following is based on 4 Worker Virtual Machines with 16 Cores and 64GB RAM
-MASTER="spark://{{ groups['dse'][0] }}:7077"
+MASTER="spark://{{ master }}"
 NUM_EXECUTORS=2   # 24
 EXECUTOR_CORES=16
 EXECUTOR_MEMORY="60g"  # 10g
@@ -11,7 +11,7 @@ DRIVER_MEMORY="16g"
 umask 0077
 
 
-DEFAULT_SUBMIT_ARGS="--packages com.databricks:spark-csv_2.10:1.4.0 --driver-memory $DRIVER_MEMORY --num-executors $NUM_EXECUTORS --executor-cores $EXECUTOR_CORES --executor-memory $EXECUTOR_MEMORY"
+DEFAULT_SUBMIT_ARGS="--packages com.databricks:spark-csv_2.10:1.4.0 --jars /home/{{ cluster_user }}/apps/spark-cassandra-connector-uber.jar --driver-memory $DRIVER_MEMORY --num-executors $NUM_EXECUTORS --executor-cores $EXECUTOR_CORES --executor-memory $EXECUTOR_MEMORY"
 PYSPARK_SUBMIT_ARGS="--master $MASTER $DEFAULT_SUBMIT_ARGS"
 
 export PYSPARK_PYTHON=python

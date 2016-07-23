@@ -9,5 +9,4 @@
   command: tar -C /usr/local --strip-components 1 -xzf /home/{{ cluster_user }}/apps/node-v0.12.8-linux-x64.tar.gz
   args:
     creates: /usr/local/bin/node
-  become: yes
   

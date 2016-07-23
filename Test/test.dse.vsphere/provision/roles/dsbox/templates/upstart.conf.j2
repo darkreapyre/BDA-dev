@@ -1,4 +1,4 @@
-description "ipython"
+description "jupyter"
 
 start on runlevel [2345]
 stop on shutdown
@@ -6,7 +6,7 @@ stop on shutdown
 respawn
 respawn limit 10 15
 
-setuid {{ ipython_user }}
-setgid {{ ipython_user }}
+setuid {{ cluster_user }}
+setgid {{ cluster_user }}
 
 exec ipython notebook --no-browser

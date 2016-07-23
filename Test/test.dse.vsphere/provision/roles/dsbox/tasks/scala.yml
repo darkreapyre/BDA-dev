@@ -7,19 +7,15 @@
     id: 642AC823
     keyserver: keyserver.ubuntu.com:80
     state: present
-  become: yes
 
 - name: Update Hosts
   apt: update_cache=yes
-  become: yes
 
 - name: Install Scala-sbt
   apt: pkg=sbt state=installed update-cache=yes
-  become: yes
 
 - name: Download scala
   get_url: url=http://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version}}.deb dest=/home/{{ cluster_user }}/apps/scala-{{ scala_version }}.deb
 
 - name: Install scala
   apt: deb=/home/{{ cluster_user }}/apps/scala-{{ scala_version }}.deb
-  become: yes

@@ -27,15 +27,14 @@
     - python-psycopg2
     - python-mpltoolkits.basemap
     - libfontconfig
-  become: True
 
 - name: Install Pip Dependencies
   pip: name={{ item }} state=present
   with_items:
-    - jupyter
-    - pyzmq
-    - jinja2
-    - tornado
+#    - jupyter
+#    - pyzmq
+#    - jinja2
+#    - tornado
     - pygments
     - jsonschema
     - mpld3
@@ -61,8 +60,6 @@
     - sympy
     - keras
     - cassandra-driver
-  become: yes
 
 - name: Install TensorFlow
   pip: name=https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-{{ tflow_version }}-cp27-none-linux_x86_64.whl state=present
-  become: yes
