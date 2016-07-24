@@ -132,3 +132,4 @@
 # TO-DO
 #- include: rstudio-server.yml
 #- include: shiny-server.yml
+#- include: zeppelin.yml

@@ -6,6 +6,7 @@
   unarchive: src=/home/{{ cluster_user }}/apps/node-v0.12.8-linux-x64.tar.gz dest=/home/{{ cluster_user }}/apps/ copy=no
 
 - name: Install Node.js
+  # rework this to use unarchive instead of the tar command
   command: tar -C /usr/local --strip-components 1 -xzf /home/{{ cluster_user }}/apps/node-v0.12.8-linux-x64.tar.gz
   args:
     creates: /usr/local/bin/node

@@ -3,7 +3,7 @@
 - name: Add R public key
   apt_key:
     id: E084DAB9
-    keyserver: keyserver.ubuntu.com
+    keyserver: keyserver.ubuntu.com:80
     state: present
 
 # in order to get the latest version of R, add CRAN repository to the to the list of sources
@@ -40,7 +40,7 @@
   shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('IRkernel' %in% installed.packages()[,'Package'])) devtools::install_github('IRkernel/IRkernel')"
 
 - name: Install IRdisplay package recommended for the R interpreter
-  shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('repr' %in% installed.packages()[,'Package'])) devtools::install_github('IRkernel/IRdisplay')"
+  shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('IRdisplay' %in% installed.packages()[,'Package'])) devtools::install_github('IRkernel/IRdisplay')"
 
 - name: Install R repr package recommended for the R interpreter display system (requires devtools first).
   shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('repr' %in% installed.packages()[,'Package'])) devtools::install_github('IRkernel/repr')"
@@ -60,3 +60,20 @@
     - base64enc
     - data.table
     - rmarkdown
+#    - tidyr
+#    - dplyr
+#    - stringr
+#    - rstudio
+#    - knitr
+#    - XML
+#    - rJava
+#    - mallet
+#    - igraph
+#    - SnowballC
+#    - NLP
+#    - openNLP
+#    - rjson
+#    - rPython
+#    - plyr
+#    - reshape2
+#    - caret
