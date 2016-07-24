@@ -31,7 +31,7 @@
     group: "{{ cluster_user }}"
 
 - name: Create Spark current version symbolic link and assign ownsership
-  file: path=/home/{{ cluster_user }}/spark src=/home/{{ cluster_user }}/apps/spark-{{ spark_version }}-bin-hadoop2.6 state=link owner={{ cluster_user }} group={{ cluster_user }}
+  file: path=/home/{{ cluster_user }}/apps/spark src=/home/{{ cluster_user }}/apps/spark-{{ spark_version }}-bin-hadoop2.6 state=link owner={{ cluster_user }} group={{ cluster_user }}
 
 - name: Create scripts directory
   file: path=/home/{{ cluster_user }}/scripts state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=0777 recurse=yes
