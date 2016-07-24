@@ -116,6 +116,7 @@
 
 - name: Configure Data Science Libraries on the admin node
   hosts: admin
+  user: "{{ cluster_user }}"
   become: yes
 #  become_user: {{ cluster_user }}
 
