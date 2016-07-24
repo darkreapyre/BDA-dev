@@ -9,10 +9,10 @@
   file: path=/home/{{ cluster_user }}/apps state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=0777 recurse=yes
 
 - name: Copy Spark-kernel to Apps directory
-  copy: src=spark-kernel-0.1.5-SNAPSHOT.tar.gz dest=/home/{{ cluster_user }}/apps mode=0777
+  copy: src=spark-kernel-0.1.5-SNAPSHOT.tar.gz dest=/home/{{ cluster_user }}/apps mode=0777 owner={{ cluster_user }} group={{ cluster_user }}
 
 - name: Copy "uber" jar to Apps directory
-  copy: src=spark-cassandra-connector-uber.jar dest=/home/{{ cluster_user }}/apps mode=0664
+  copy: src=spark-cassandra-connector-uber.jar dest=/home/{{ cluster_user }}/apps mode=0664 owner={{ cluster_user }} group={{ cluster_user }}
 
 - name: Download Spark 1.6.1 to Apps directory
   get_url: url=http://apache.claz.org/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.6.tgz dest=/home/{{ cluster_user }}/apps/spark-{{ spark_version }}-bin-hadoop2.6.tgz
