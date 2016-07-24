@@ -16,6 +16,8 @@
     src: /home/{{ cluster_user }}/apps/spark-kernel/logo-64x64.png
     path: /home/{{ cluster_user }}/.local/share/jupyter/kernels/scala/logo-64x64.png
     state: link
+    owner: "{{ cluster_user }}"
+    group: "{{ cluster_user }}"
 
 - name: Copy kernel.json
   template: src=kernel.json.j2 dest=/home/{{ cluster_user }}/.local/share/jupyter/scala/kernel.json owner={{ cluster_user }} group={{ cluster_user }}
