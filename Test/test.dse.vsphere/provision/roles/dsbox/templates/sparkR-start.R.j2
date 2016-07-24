@@ -40,7 +40,7 @@ library(SparkR, lib.loc = c(file.path(Sys.getenv("SPARK_HOME"), "R", "lib")))
 
 # Initialize the Spark Context for Cluster Connectivity
 sc <- sparkR.init(
-  master = "spark://{{ groups['dse'][0] }}:7077",
+  master = "{{ master }}",
   sparkEnvir = list(spark.driver.memory="2g"),
   sparkPackages="com.databricks:spark-csv_2.10:1.4.0") # Add .csv import cabaility
 

@@ -33,7 +33,7 @@ sudo su {{ cluster_user }} -c 'cat > /home/{{ cluster_user }}/.local/share/jupyt
   ],
   "codemirror_mode": "scala",
   "env": {
-    "SPARK_OPTS": "--master=spark://{{ groups['dse'][0] }}:7077 --packages=com.databricks:spark-csv_2.10:1.4.0 --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=trace",
+    "SPARK_OPTS": "--master={{ master }} --packages=com.databricks:spark-csv_2.10:1.4.0 --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=trace",
     "MAX_INTERPRETER_THREADS": "64",
     "SPARK_CONFIGURATION": "spark.cores.max=64",
     "CAPTURE_STANDARD_OUT": "true",
