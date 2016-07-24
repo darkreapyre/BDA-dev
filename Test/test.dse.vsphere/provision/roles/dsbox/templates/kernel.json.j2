@@ -3,15 +3,15 @@
   "display_name": "Scala 2.10 (Spark)",
   "language_info": { "name": "scala" },
   "argv": [
-    "/opt/spark-kernel/bin/spark-kernel",
+    "/home/{{ cluster_user }}/apps/spark-kernel/bin/spark-kernel",
     "--profile",
     "{connection_file}"
   ],
   "codemirror_mode": "scala",
   "env": {
-    "SPARK_OPTS": "--master={{ master }} --packages=com.databricks:spark-csv_2.10:1.4.0 --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=trace",
+    "SPARK_OPTS": "--master={{ master }} --jars /home/{{ cluster_user }}/apps/spark-cassandra-connector-uber.jar --packages=com.databricks:spark-csv_2.10:1.4.0 --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=trace",
     "MAX_INTERPRETER_THREADS": "16",
-    "SPARK_CONFIGURATION": "spark.cores.max=2",
+    "SPARK_CONFIGURATION": "spark.cores.max=4",
     "CAPTURE_STANDARD_OUT": "true",
     "CAPTURE_STANDARD_ERR": "true",
     "SEND_EMPTY_OUTPUT": "false",

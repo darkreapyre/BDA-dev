@@ -23,7 +23,7 @@
 
 - name: Extract spark archive
   unarchive:
-    src: apps/spark-{{ spark_version }}-bin-hadoop2.6.tgz
+    src: /home/{{ cluster_user }}/apps/spark-{{ spark_version }}-bin-hadoop2.6.tgz
     dest: /home/{{ cluster_user }}/apps
     creates: /home/{{ cluster_user }}/apps/spark-{{ spark_version }}-bin-hadoop2.6
     copy: no
@@ -120,8 +120,6 @@
 
 #########################################################################################################################################
 
-
-
 - include: python.yml
 - include: scala.yml
 - include: ruby.yml
@@ -129,3 +127,8 @@
 - include: maven.yml
 - include: r.yml
 - include: jupyter.yml
+- include: spark-kernel.yml
+
+# TO-DO
+#- include: rstudio-server.yml
+#- include: shiny-server.yml

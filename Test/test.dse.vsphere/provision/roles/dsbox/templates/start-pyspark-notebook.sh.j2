@@ -11,7 +11,7 @@ DRIVER_MEMORY="16g"
 umask 0077
 
 
-DEFAULT_SUBMIT_ARGS="--packages com.databricks:spark-csv_2.10:1.4.0 --jars /home/{{ cluster_user }}/apps/spark-cassandra-connector-uber.jar --driver-memory $DRIVER_MEMORY --num-executors $NUM_EXECUTORS --executor-cores $EXECUTOR_CORES --executor-memory $EXECUTOR_MEMORY"
+DEFAULT_SUBMIT_ARGS="--packages com.databricks:spark-csv_2.10:1.4.0,datastax:spark-cassandra-connector:1.6.0-s_2.10 --driver-memory $DRIVER_MEMORY --num-executors $NUM_EXECUTORS --executor-cores $EXECUTOR_CORES --executor-memory $EXECUTOR_MEMORY"
 PYSPARK_SUBMIT_ARGS="--master $MASTER $DEFAULT_SUBMIT_ARGS"
 
 export PYSPARK_PYTHON=python
