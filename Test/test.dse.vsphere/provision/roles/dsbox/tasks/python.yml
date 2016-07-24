@@ -21,7 +21,6 @@
     - texlive
     - texlive-latex-extra
     - pandoc
-    - pyyaml
     - libreadline-dev
     - python-psycopg2
     - python-mpltoolkits.basemap
@@ -37,6 +36,8 @@
     - pygments
     - jsonschema
     - mpld3
+    - pyyaml
+    - psutil
 #    - seaborn
 #    - nltk
 #    - pyzipcode
