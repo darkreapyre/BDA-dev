@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # The following is based on 4 Worker Virtual Machines with 16 Cores and 64GB RAM
-MASTER="spark://{{ master }}"
+MASTER="{{ master }}"
 NUM_EXECUTORS=2   # 24
 EXECUTOR_CORES=16
 EXECUTOR_MEMORY="60g"  # 10g

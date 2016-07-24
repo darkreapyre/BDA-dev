@@ -25,6 +25,7 @@
     - python-psycopg2
     - python-mpltoolkits.basemap
     - libfontconfig
+    - gdebi-core
 
 - name: Install Python libraries
   pip: name={{ item }} state=present
