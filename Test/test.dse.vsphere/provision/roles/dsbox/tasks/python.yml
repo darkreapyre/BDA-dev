@@ -21,7 +21,6 @@
     - texlive
     - texlive-latex-extra
     - pandoc
-    - psutil
     - pyyaml
     - libreadline-dev
     - python-psycopg2
