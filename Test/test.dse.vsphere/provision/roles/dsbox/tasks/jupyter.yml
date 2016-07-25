@@ -15,6 +15,7 @@
 - name: Install Python2 kernel
   command: python2 -m ipykernel install
 
+# The task below may not be needed as the config gets overwritten anyway
 - name: Generate notebook config
   command: jupyter notebook --generate-config
 #  shell: sudo su {{ cluster_user }} -c "jupyter notebook --generate-config"
@@ -32,7 +33,7 @@
 #  become_user: "{{ cluster_user }}"
 #  become_method: su
 
-# the following need to be researched as the destination directory doesn;t exist in jupyter
+# The following need to be researched as the destination directory doesn't exist in jupyter.
 #- name: Disable notebook warnings
 #  template: src=disable-warning.py.j2 dest=/home/{{ cluster_user }}/.ipython/profile_default/startup/disable-warning.py
 

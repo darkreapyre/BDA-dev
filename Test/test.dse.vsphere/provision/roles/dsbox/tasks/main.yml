@@ -35,21 +35,21 @@
 #####                          Code Block Just in case the old "manual scripts method" is required                                  #####
 #########################################################################################################################################
 
-#- name: Set SPARK_HOME in .bashrc
-#  lineinfile:
-#    dest: '/home/{{ cluster_user }}/.bashrc'
-#    line: 'export SPARK_HOME=/home/{{ cluster_user }}/apps/spark'
-#    regexp: '^(# *)?export SPARK_HOME='
+- name: Set SPARK_HOME in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'export SPARK_HOME=/home/{{ cluster_user }}/apps/spark'
+    regexp: '^(# *)?export SPARK_HOME='
 #  become: yes
-#  become_user: "{{ cluster_user }}"
+  become_user: "{{ cluster_user }}"
 
-#- name: Add PATH to SPARK_HOME/bin in .bashrc
-#  lineinfile:
-#    dest: '/home/{{ cluster_user }}/.bashrc'
-#    line: 'export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin # SPARK-BIN-PATH'
-#    regexp: '# SPARK-BIN-PATH'
+- name: Add PATH to SPARK_HOME/bin in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin # SPARK-BIN-PATH'
+    regexp: '# SPARK-BIN-PATH'
 #  become: yes
-#  become_user: "{{ cluster_user }}"
+  become_user: "{{ cluster_user }}"
 
 - name: Copy deployment scripts (JUST IN CASE)
   template: src={{ item.src }} dest={{ item.dest }} owner={{ cluster_user }} group={{ cluster_user }} mode=0777
