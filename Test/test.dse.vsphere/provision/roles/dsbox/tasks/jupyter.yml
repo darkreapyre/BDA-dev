@@ -32,8 +32,9 @@
 #  become_user: "{{ cluster_user }}"
 #  become_method: su
 
-- name: Disable notebook warnings
-  template: src=disable-warning.py.j2 dest=/home/{{ cluster_user }}/.ipython/profile_default/startup/disable-warning.py
+# the following need to be researched as the destination directory doesn;t exist in jupyter
+#- name: Disable notebook warnings
+#  template: src=disable-warning.py.j2 dest=/home/{{ cluster_user }}/.ipython/profile_default/startup/disable-warning.py
 
 # The following is still TO-DO
 #- name: Configure upstart script
