@@ -17,6 +17,7 @@
 
 - name: Generate notebook config
   command: jupyter notebook --generate-config
+#  shell: sudo su {{ cluster_user }} -c "jupyter notebook --generate-config"
 #  become: yes
   become_user: "{{ cluster_user }}"
 #  become_method: su
@@ -34,7 +35,7 @@
 - name: Disable notebook warnings
   template: src=disable-warning.py.j2 dest=/home/{{ cluster_user }}/.ipython/profile_default/startup/disable-warning.py
 
-# The following is still TODO
+# The following is still TO-DO
 #- name: Configure upstart script
 #  template:
 #    src: upstart.conf.j2
