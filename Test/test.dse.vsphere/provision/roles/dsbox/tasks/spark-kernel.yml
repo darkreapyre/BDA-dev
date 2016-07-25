@@ -20,4 +20,4 @@
     group: "{{ cluster_user }}"
 
 - name: Copy kernel.json
-  template: src=kernel.json.j2 dest=/home/{{ cluster_user }}/.local/share/jupyter/scala/kernel.json owner={{ cluster_user }} group={{ cluster_user }}
+  template: src=kernel.json.j2 dest=/home/{{ cluster_user }}/.local/share/jupyter/kernels/scala/kernel.json owner={{ cluster_user }} group={{ cluster_user }}
