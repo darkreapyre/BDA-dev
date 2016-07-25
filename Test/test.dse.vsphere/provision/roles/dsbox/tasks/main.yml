@@ -1,9 +1,4 @@
 ---
-
-# Add some code to find the spark master and set the fact
-# spark master can be found by executing `dse client-tool spark master address`
-
-
 # Configure the dependencies for Jupyter/Zeppelin IDE and the libraries for Data Science
 - name: Create the Apps directory
   file: path=/home/{{ cluster_user }}/apps state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=0777 recurse=yes
