@@ -3,7 +3,7 @@
 - name: Add R public key
   apt_key:
     id: E084DAB9
-    keyserver: keyserver.ubuntu.com:80
+    keyserver: hkp://keyserver.ubuntu.com:80
     state: present
 
 # in order to get the latest version of R, add CRAN repository to the to the list of sources
