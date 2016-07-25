@@ -44,10 +44,10 @@
     - name: Build hosts file on all servers
       lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
       when: hostvars[item].ansible_default_ipv4.address is defined
-      with_items: groups['all']
+      with_items: groups['all'] #<-- using bare variables; try "{{ groups['all'] }}"
       become: yes
     
-- hosts: all[0]
+- hosts: all[0] #<-- using bar variables; try  - hosts: "{{ groups['all'][0] }}""
   tasks:
 
     - name: Build hosts file on local machine
@@ -72,7 +72,7 @@
       become: yes
       become_user: "{{ cluster_user }}"
 
-#- hosts: all[1:]
+#- hosts: all[1:] #<-- Using bare variables; try - hosts: "{{ groups['all'][1:] }}""
 #  tasks:
 #    - name: Distribute ssh keys
 #      copy: src=sshkeys/{{ item }} dest=/home/{{ cluster_user }}/.ssh/{{ item }}
@@ -100,7 +100,7 @@
 #  roles:
 #  - dse
 
-#- hosts: all[1]
+#- hosts: all[1] #<-- using bare variables, try "{{ groups['all'][1] }}""
 #  tasks:
 #    - name: Get Spark Master address
 #      command: dse client-tool spark master-address
@@ -125,4 +125,4 @@
   
   vars:
 #    master: "{{ master_address.stdout }}"
-    master: "blahblahblah"  #<-- for testing stand alone "admin"" install
+    master: "blahblahblah"  #<-- for testing stand alone `admin` node install
