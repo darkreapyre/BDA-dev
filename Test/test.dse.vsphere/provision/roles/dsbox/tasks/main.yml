@@ -120,9 +120,9 @@
 - include: ruby.yml
 - include: nodejs.yml
 - include: maven.yml
-- include: jupyter.yml
-- include: r.yml
-- include: spark-kernel.yml
+#- include: jupyter.yml
+#- include: r.yml
+#- include: spark-kernel.yml
 
 # TO-DO
 #- include: rstudio-server.yml
