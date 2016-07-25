@@ -17,9 +17,9 @@
 
 - name: Generate notebook config
   command: jupyter notebook --generate-config
-  become: yes
-  become_user: "{{ cluster_user }}"
-  become_method: su
+#  become: yes
+#  become_user: "{{ cluster_user }}"
+#  become_method: su
 
 - name: Create Jupyter default config
   template:
