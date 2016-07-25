@@ -9,7 +9,7 @@
     group: "{{ cluster_user }}"
 
 - name: Create spark-kernel directory
-  file: path=/home/{{ cluster_user }}/.local/share/jupyter/kernels/scala owner={{ cluster_user }} group={{ cluster_user }}
+  file: path=/home/{{ cluster_user }}/.local/share/jupyter/kernels/scala state=directory owner={{ cluster_user }} group={{ cluster_user }}
 
 - name: Create symlink to spark-kernel
   file:
