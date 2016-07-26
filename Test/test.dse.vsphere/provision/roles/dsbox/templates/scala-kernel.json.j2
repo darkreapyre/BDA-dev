@@ -11,7 +11,7 @@
   "env": {
     "SPARK_OPTS": "--master={{ master }} --jars /home/{{ cluster_user }}/apps/spark-cassandra-connector-uber.jar --conf spark.cassandra.connection.host={{ master}} --packages=com.databricks:spark-csv_2.10:1.4.0 --driver-java-options=-Xms1024M --driver-java-options=-Xmx8192M --driver-java-options=-Dlog4j.logLevel=trace",
     "MAX_INTERPRETER_THREADS": "16",
-    "SPARK_CONFIGURATION": "spark.cores.max=8",
+    "SPARK_CONFIGURATION": "spark.cores.max=11",
     "CAPTURE_STANDARD_OUT": "true",
     "CAPTURE_STANDARD_ERR": "true",
     "SEND_EMPTY_OUTPUT": "false",
