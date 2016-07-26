@@ -285,12 +285,28 @@ After the last virtual machine has been brought online, the Ansible Controller w
 ### KAFKA???
 
 # Appendix A: Manually Install Zeppelin
-Since building Zeppelin can take a while, it is recommended to manually build it, if required. The architecture deployment will already have cloned the project onto the `admin` node, in the `/home/admin/apps/` directory. The following build steps will also include `Python` and `R` support via `PySpark` and `SparkR` respectivley:
+Since building Zeppelin can take a while, it is recommended to manually build it, if required.
+
+## Building Zeppelin
+The architecture deployment will already have cloned the project onto the `admin` node, in the `/home/admin/apps/` directory. The following build steps will also include `Python` and `R` support via `PySpark` and `SparkR` respectivley:
 ```sh
 $ cd /home/admin/apps/incubator-zeppelin
 $ mvn clean package -Pspark-1.6 -Ppyspark -Psparkr -DskipTests
 $ ./bin/zeppelin-daemon.sh start
 ```
+
+## Configuring Zeppelin
+Once started, the Zeppelin UI is accessable at http://<Admin Node Address>:8080. Perform the following to configure the environment:
+1. Navigate to the Interpreter page. 
+2. Enter `spark` for the Spark Interpreter and click `Edit`.
+3. Add a new paramter `spark.cassandra.connection.host` with the value set to the IP Address of the Spark Master.
+4. Click the `Save` button.
+5. Enter `cassandra` for the Cassandra Interpreter and click `Edit`.
+6. Change the value of `cassandra.cluster` to `MyCassandraCluster`.
+7. Chnage the value of `cassandra.hosts` to the IP Address of the Spark Master.
+8. Click the `Save` button.
+
+Zeppelin is now configured for usage with Spark and Cassandra.
 
 # Appendix B: Create a "fat" jar for the spark-cassandra-connector
 ## Background
