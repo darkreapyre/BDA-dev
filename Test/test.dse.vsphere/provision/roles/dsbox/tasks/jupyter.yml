@@ -33,6 +33,15 @@
 #  become_user: "{{ cluster_user }}"
 #  become_method: su
 
+
+- name: Unset the Jupyter runtime id in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'unset XDG_RUNTIME_DIR'
+    regexp: '^(# *)?unset XDG_RUNTIME'
+#  become: yes
+  become_user: "{{ cluster_user }}"
+
 # The following need to be researched as the destination directory doesn't exist in jupyter.
 #- name: Disable notebook warnings
 #  template: src=disable-warning.py.j2 dest=/home/{{ cluster_user }}/.ipython/profile_default/startup/disable-warning.py
