@@ -47,3 +47,9 @@ TFlow_Version: "0.9.0"
 
 # DataStax Enterprise version
 DSE_Version: "5.0.x-1"
+
+# RStudio Server version
+RStudio_Server: "0.99.903"
+
+# RStudio Shiny version
+Shiny_Version: "1.4.2.786"

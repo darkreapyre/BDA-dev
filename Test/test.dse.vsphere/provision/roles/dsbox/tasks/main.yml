@@ -123,8 +123,8 @@
 - include: jupyter.yml
 - include: r.yml
 - include: spark-kernel.yml
+- include: rstudio-server.yml
+- include: shiny-server.yml
 
 # TO-DO
-#- include: rstudio-server.yml
-#- include: shiny-server.yml
 #- include: zeppelin.yml
