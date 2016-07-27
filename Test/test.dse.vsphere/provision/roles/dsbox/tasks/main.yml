@@ -124,7 +124,7 @@
 - include: r.yml
 - include: spark-kernel.yml
 - include: rstudio-server.yml
-- include: shiny-server.yml
+- include: rstudio-shiny.yml
 
 # TO-DO
 #- include: zeppelin.yml

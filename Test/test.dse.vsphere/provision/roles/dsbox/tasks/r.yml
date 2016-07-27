@@ -53,6 +53,7 @@
 - name: Install R packages recommended for the R interpreter.
   shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs=c('{{item}}'), repos=c('{{r_packages_repos}}'))"
   with_items:
+    - shiny
     - ggplot2
     - rzmq
     - rmarkdown
@@ -62,20 +63,20 @@
     - base64enc
     - data.table
     - rmarkdown
-#    - tidyr
-#    - dplyr
-#    - stringr
-#    - rstudio
-#    - knitr
-#    - XML
-#    - rJava
-#    - mallet
-#    - igraph
-#    - SnowballC
-#    - NLP
-#    - openNLP
-#    - rjson
-#    - rPython
-#    - plyr
-#    - reshape2
-#    - caret
+    - tidyr
+    - dplyr
+    - stringr
+    - rstudio
+    - knitr
+    - XML
+    - rJava
+    - mallet
+    - igraph
+    - SnowballC
+    - NLP
+    - openNLP
+    - rjson
+    - rPython
+    - plyr
+    - reshape2
+    - caret
