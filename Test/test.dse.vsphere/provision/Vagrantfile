@@ -27,10 +27,10 @@ Shiny_Version = @cmd['Shiny_Version']
 # -------------------------- END GLOBAL CONFIG PARAMS -----------------------
 
 groups = {
+  "admin" => [],
   "dse" => [],
   "flink" => [],
-  "admin" => [],
-  "all_groups:children" => ["dse", "flink", "admin"]
+  "all_groups:children" => ["admin", "dse", "flink"]
 }
 
 Vagrant.configure("2") do |config|
