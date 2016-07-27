@@ -56,8 +56,8 @@ Vagrant.configure("2") do |config|
           ansible.groups = groups
           ansible.extra_vars = {
             "dse_version" => DSE_Version,
-            "rstudio_server" => rstudio_server,
-            "shiny_version" => shiny_version,
+            "rstudio_server" => RStudio_Server,
+            "shiny_version" => Shiny_Version,
             "spark_version" => Spark_Version,
             "maven_version" => Maven_Version,
             "tflow_version" => TFlow_Version,

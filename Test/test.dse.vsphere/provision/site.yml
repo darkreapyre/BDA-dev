@@ -47,7 +47,7 @@
       with_items: groups['all'] #<-- using bare variables; try "{{ groups['all'] }}"
       become: yes
     
-- hosts: all[0] #<-- using bar variables; try  - hosts: "{{ groups['all'][0] }}""
+- hosts: all[0] #<-- using bare variables; try  - hosts: "{{ groups['all'][0] }}""
   tasks:
 
     - name: Build hosts file on local machine
@@ -63,7 +63,7 @@
     - name: Create local directory for ssh keys
       local_action: file path=sshkeys state=directory
     
-    - name: Fetch ssh keys from the master
+    - name: Fetch ssh keys from the admin node
       fetch: src=/home/{{ cluster_user }}/.ssh/{{ item }} dest=sshkeys/{{ item }} flat=yes
       with_items:
         - id_rsa
