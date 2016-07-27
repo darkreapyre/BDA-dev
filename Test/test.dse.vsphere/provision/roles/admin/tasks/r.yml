@@ -50,7 +50,7 @@
   become_user: "{{ cluster_user }}"
   become_method: sudo
 
-- name: Install R packages recommended for the R interpreter
+- name: Install R packages recommended for the R interpreter.
   shell: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs=c('{{item}}'), repos=c('{{r_packages_repos}}'))"
   with_items:
     - shiny
@@ -67,6 +67,7 @@
     - dplyr
     - stringr
     - rstudio
+    - knitr
     - XML
     - rJava
     - mallet

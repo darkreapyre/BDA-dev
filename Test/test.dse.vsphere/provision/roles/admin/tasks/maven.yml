@@ -6,8 +6,6 @@
   uri: url=http://www.apache.org/dyn/closer.cgi?path=maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz&asjson=1 return_content=yes
   register: webResponse
 
-#- debug: var=webResponse
-
 - name: Download maven
   get_url:
     url: "{{webResponse.json.preferred}}{{webResponse.json.path_info}}"

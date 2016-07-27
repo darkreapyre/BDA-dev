@@ -23,6 +23,3 @@
 
 - name: Install scala
   shell: gdebi /home/{{ cluster_user }}/apps/scala-{{ scala_version }}.deb
-#  become: yes
-#  become_method: sudo  
-#  apt: deb=/home/{{ cluster_user }}/apps/scala-{{ scala_version }}.deb

@@ -246,13 +246,13 @@ After the last virtual machine has been brought online, the Ansible Controller w
 	- Install DataStax Enterprise.
 	- Enable Spark, Graph and Solr.
 	- Start DataStax Enterprise.
-3. Execute the *admin* (DataStax OpsCenter) role on the `admin` group:
+3. Execute the *opscenter* (DataStax OpsCenter) role on the `admin` group:
 	- Install the necessary packages for DataStax OpsCenter.
 	- Add the necessary repositories for Oracle Java 8 and DataStax OpsCenter.
 	- Install Oracle Java 8.
 	- Install DataStax OpsCenter.
 	- Start DataStax OpsCenter.
-4. Execute the *dsbox* (Data Science Tools and Libraries) role on the `admin` group:
+4. Execute the *admin* (Data Science Tools and Libraries) role on the `admin` group:
 	- Install the necessary programming languages and frameworks:
 		- Ruby
 		- Node.js
@@ -272,12 +272,33 @@ After the last virtual machine has been brought online, the Ansible Controller w
 6. KAFKA???
 
 ## Cluster Usage
+
+### Spark
+
+### OpsCenter
+
 ### Jupyter
+The Jupyter Server has been pr-configured with the necessary kernels for Data Science:
+- Python2
+- Python3
+- Scala 2.10
+- R
+
+The `notebook` server can be started by executing:
+```sh
+$ jupyter notebook
+```
+It is however recommend to launch the `notebook` by using the pre-configured script:
+```sh
+$ /home/admin/scripts/start-pyspark-notebook.sh
+```
+
+This script already has all the needed configuration settngs that have been optimized for Spark Workers, Spark Master and the required packages and "jars" for usage with Cassandra. Once either of these commands are executed, the notebook server is accessible at `http://<Admin server address>:8001`.
 
 ### R Studio Server
-
+:8787
 ### R Studio Shiny Server
-
+:3838
 ### Zeppelin (see Appendix A)
 
 ### FLINK???
