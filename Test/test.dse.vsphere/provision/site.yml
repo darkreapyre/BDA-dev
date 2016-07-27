@@ -101,14 +101,6 @@
   roles:
   - dse
 
-# Using bare variables, try "{{ groups['all'][1] }}""
-- hosts: all[1]
-  tasks:
-    - name: Get Spark Master address
-      shell: /usr/bin/dse client-tool spark master-address
-      register: master_address
-      become_user: {{ cluster_user }}
-
 - name: Install OpsCenter on the admin node
   hosts: admin
   user: vagrant
@@ -116,6 +108,14 @@
 
   roles:
   - opscenter
+
+# Using bare variables, try "{{ groups['all'][1] }}""
+- hosts: all[1]
+  tasks:
+    - name: Get Spark Master address
+      shell: /usr/bin/dse client-tool spark master-address
+      register: master_address
+      become_user: "{{ cluster_user }}"
 
 - name: Configure Data Science Libraries on the admin node
   hosts: admin
