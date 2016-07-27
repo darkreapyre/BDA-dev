@@ -48,7 +48,7 @@
       become: yes
 
 # Using bare variables; try  - hosts: "{{ groups['all'][0] }}"
-- hosts: all[0]
+- hosts: admin
   tasks:
 
     - name: Build hosts file on local machine
@@ -74,7 +74,7 @@
       become_user: "{{ cluster_user }}"
 
 # Using bare variables; try - hosts: "{{ groups['all'][1:] }}"
-- hosts: all[1:]
+- hosts: all:!admin
   tasks:
     - name: Distribute ssh keys
       copy: src=sshkeys/{{ item }} dest=/home/{{ cluster_user }}/.ssh/{{ item }}
@@ -109,13 +109,16 @@
   roles:
   - opscenter
 
-# Using bare variables, try "{{ groups['all'][1] }}""
-- hosts: all[1]
+# Using bare variables, try "{{ groups['dse'][1] }}""
+- hosts: dse[1]
   tasks:
     - name: Get Spark Master address
       shell: /usr/bin/dse client-tool spark master-address
-      register: master_address
+      register: spark_master
       become_user: "{{ cluster_user }}"
+
+    - name: Set Spark Master Address fact
+      set_fact: master_address="{{ spark_master.stdout }}"
 
 - name: Configure Data Science Libraries on the admin node
   hosts: admin
