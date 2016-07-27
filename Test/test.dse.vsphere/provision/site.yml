@@ -105,8 +105,9 @@
 - hosts: all[1]
   tasks:
     - name: Get Spark Master address
-      shell: dse client-tool spark master-address
+      shell: /usr/bin/dse client-tool spark master-address
       register: master_address
+      become_user: {{ cluster_user }}
 
 - name: Install OpsCenter on the admin node
   hosts: admin
