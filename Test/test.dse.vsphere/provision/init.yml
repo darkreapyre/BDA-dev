@@ -46,7 +46,7 @@ Scala_Version: "2.10.5"
 TFlow_Version: "0.9.0"
 
 # DataStax Enterprise version
-DSE_Version: "5.0.x-1"
+DSE_Version: "5.0.1-1"
 
 # RStudio Server version
 RStudio_Server: "0.99.903"

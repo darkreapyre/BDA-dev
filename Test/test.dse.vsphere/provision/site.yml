@@ -43,7 +43,8 @@
     - name: Build hosts file on all servers
       lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
       when: hostvars[item].ansible_default_ipv4.address is defined
-      with_items: groups['all'] #<-- using bare variables; try "{{ groups['all'] }}"
+      # Using bare variables; try "{{ groups['all'] }}"
+      with_items: groups['all']
       become: yes
 
 # Using bare variables; try  - hosts: "{{ groups['all'][0] }}"
@@ -104,7 +105,7 @@
 - hosts: all[1]
   tasks:
     - name: Get Spark Master address
-      command: dse client-tool spark master-address
+      shell: dse client-tool spark master-address
       register: master_address
 
 - name: Install OpsCenter on the admin node
