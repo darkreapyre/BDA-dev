@@ -268,8 +268,8 @@ After the last virtual machine has been brought online, the Ansible Controller w
 		- R
 	- Install R Studio Server.
 	- Install R Studio Shiny Server.
-5. FLNK???
-6. KAFKA???
+5. FLNK -> To-do
+6. KAFKA -> To-do
 
 ## Cluster Usage
 
