@@ -1,0 +1,64 @@
+---
+#- name: Download hadoop
+#  get_url: url=http://www.apache.org/dist/hadoop/common/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz dest=/opt/hadoop-{{ hadoop_version }}.tar.gz
+
+- name: Extract hadoop archive
+  #command: tar xvfz /home/{{ cluster_user }}/hadoop-{{ hadoop_version }}.tar.gz -C /opt #manual extract
+  unarchive:
+    #src: /opt/hadoop-{{ hadoop_version }}.tar.gz #if not using one time download
+    src: apps/hadoop-{{ hadoop_version }}.tar.gz
+    dest: /opt
+    creates: /opt/hadoop-{{ hadoop_version }}
+    copy: yes
+    #copy: no #if not using the one time download
+    owner: "{{ cluster_user }}"
+    group: "{{ cluster_user }}"
+
+# Set permissions on the extracted archive only if tar command is used as opposed to unarchive with "copy: yes"
+#- name: Set permissions on hadoop archive
+#  file: path=/opt/hadoop-{{ hadoop_version }} state=directory owner={{ cluster_user }} group={{ cluster_user }}
+
+- name: Create Hadoop current version symbolic link and assign ownsership
+  file: path=/opt/hadoop src=/opt/hadoop-{{ hadoop_version }} state=link owner={{ cluster_user }} group={{ cluster_user }}
+
+- name: Set HADOOP_HOME in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'export HADOOP_HOME={{ hadoop_home }}'
+    regexp: '^(# *)?export HADOOP_HOME='
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Add PATH to HADOOP_HOME/bin in .bashrc
+  lineinfile:
+    dest: '/home/{{ cluster_user }}/.bashrc'
+    line: 'export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin # HADOOP-BIN-PATH'
+    regexp: '# HADOOP-BIN-PATH'
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Build hosts file
+  lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
+  when: hostvars[item].ansible_default_ipv4.address is defined
+  with_items: groups['all']
+
+- name: Remove localhost IP address
+  lineinfile: dest=/etc/hosts regexp='127.0.1.1' state=absent
+
+- name: Create HDFS tmp
+  file: path=/hdfs/tmp state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=750
+
+- name: Add the Hadoop configuration files
+  template: src={{ item.src }} dest={{ item.dest }} owner={{ cluster_user }} group={{ cluster_user }}
+  with_items:
+    - {src: "core-site.xml.j2", dest: "{{ hadoop_home }}/etc/hadoop/core-site.xml"}
+    - {src: "hdfs-site.xml.j2", dest: "{{ hadoop_home }}/etc/hadoop/hdfs-site.xml"}
+    - {src: "yarn-site.xml.j2", dest: "{{ hadoop_home }}/etc/hadoop/yarn-site.xml"}
+    - {src: "mapred-site.xml.j2", dest: "{{ hadoop_home }}/etc/hadoop/mapred-site.xml"}
+    - {src: "hadoop-env.sh.j2", dest: "{{ hadoop_home }}/etc/hadoop/hadoop-env.sh"}
+
+- include: namenode.yml
+  when: '"masters" in group_names'
+
+- include: datanode.yml
+  when: '"slaves" in group_names'

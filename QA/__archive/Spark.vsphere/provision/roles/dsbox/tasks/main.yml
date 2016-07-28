@@ -1,0 +1,77 @@
+---
+- name: Create the Apps directory
+  file: path=/home/{{ cluster_user }}/apps state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=0777 recurse=yes
+
+- name: Copy Spark-kernel to Apps directory
+  copy: src=spark-kernel-0.1.5-SNAPSHOT.tar.gz dest=/home/{{ cluster_user }}/apps mode=0777
+
+- name: Create scripts directory
+  file: path=/home/{{ cluster_user }}/scripts state=directory owner={{ cluster_user }} group={{ cluster_user }} mode=0777 recurse=yes
+
+- name: Copy deployment scripts
+  template: src={{ item.src }} dest={{ item.dest }} owner={{ cluster_user }} group={{ cluster_user }} mode=0777
+  with_items:
+    - {src: "R.sh.j2", dest: "/home/{{ cluster_user }}/scripts/R.sh"}
+    - {src: "jupyter.sh.j2", dest: "/home/{{ cluster_user }}/scripts/jupyter.sh"}
+    - {src: "test_helper.sh.j2", dest: "/home/{{ cluster_user }}/scripts/test_helper.sh"}
+    - {src: "rise.sh.j2", dest: "/home/{{ cluster_user }}/scripts/rise.sh"}
+    - {src: "spark-kernel.sh.j2", dest: "/home/{{ cluster_user }}/scripts/spark-kernel.sh"}
+    - {src: "irkernel.sh.j2", dest: "/home/{{ cluster_user }}/scripts/irkernel.sh"}
+    - {src: "jupyter-extensions.sh.j2", dest: "/home/{{ cluster_user }}/scripts/jupyter-extensions.sh"}
+    - {src: "rstudio-server.sh.j2", dest: "/home/{{ cluster_user }}/scripts/rstudio-server.sh"}
+    - {src: "shiny-server.sh.j2", dest: "/home/{{ cluster_user }}/scripts/shiny-server.sh"}
+    - {src: "cassandra.sh.j2", dest: "/home/{{ cluster_user }}/scripts/cassandra.sh"}
+    - {src: "zeppelin.sh.j2", dest: "/home/{{ cluster_user }}/scripts/zeppelin.sh"}
+    - {src: "start-pyspark-notebook.sh.j2", dest: "/home/{{ cluster_user }}/scripts/start-pyspark-notebook.sh"}
+    - {src: "sparkR-start.R.j2", dest: "/home/{{ cluster_user }}/scripts/sparkR-start.R"}
+
+- name: Install R (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/R.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+ 
+- name: Install Jupyter (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/jupyter.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Imstall test_helper (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/test_helper.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Install Rise (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/rise.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Install Spark-kernel (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/spark-kernel.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Install irkernel (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/irkernel.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Install Jupyter Extensions (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/jupyter-extensions.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+  ignore_errors: yes
+
+- name: Install Rstudio Server (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/rstudio-server.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Install Rstudio Shiny Server (from scripts)
+  shell: /home/{{ cluster_user }}/scripts/shiny-server.sh
+  become: yes
+  become_user: "{{ cluster_user }}"
+
+- name: Start Spark
+  shell: /opt/spark/sbin/start-all.sh
+  become: yes
+  become_user: "{{ cluster_user }}"

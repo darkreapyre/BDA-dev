@@ -1,0 +1,83 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'yaml'
+
+# Load the initialization file `init.yml`
+@cmd = YAML.load_file('init.yml')
+puts @cmd.inspect
+
+# ------------------------- GLOBAL CONFIG PARAMS ----------------------------
+Total = @cmd['Total']
+Username = @cmd['Username']
+Password = @cmd['Password']
+Pool = @cmd['Pool']
+Cluster = @cmd['Cluster']
+Template = @cmd['Template']
+Host = @cmd['Host']
+Master_User = @cmd['Master_User']
+Master_Password = @cmd['Master_Pass']
+Hadoop_Version = @cmd['Hadoop_Version']
+Spark_Version = @cmd['Spark_Version']
+Java_Version = @cmd['Java_Version']
+Maven_Version = @cmd['Maven_Version']
+Scala_Version = @cmd['Scala_Version']
+TFlow_Version = @cmd['TFlow_Version']
+# -------------------------- END GLOBAL CONFIG PARAMS -----------------------
+
+# Build Ansible Groups to dynamically add Virtual Machines
+groups = {
+  "masters" => [],
+  "slaves" => [],
+  "all_groups:children" => ["masters", "slaves"]
+}
+
+Vagrant.configure("2") do |config|
+  config.vm.box = 'vsphere'
+  config.vm.box_url = './example_box/dummy.box'
+  config.vm.boot_timeout = 600
+  (1..Total).each do |i|
+    if i == 1
+      name = "master"
+      groups["masters"] << name
+    else
+      name = "slave-#{i - 1}"
+      groups["slaves"] << name
+    end
+    config.vm.define "#{name}" do | config |
+      config.vm.hostname = name
+      if i == Total
+        config.vm.provision :ansible do |ansible|
+          ansible.playbook = "site.yml"
+          ansible.groups = groups
+          ansible.extra_vars = {
+            "cluster_user" => Master_User,
+            "cluster_password" => Master_Password,
+            "hadoop_version" => Hadoop_Version,
+            "hadoop_home" => "/opt/hadoop",
+            "spark_version" => Spark_Version,
+            "spark_home" => "/opt/spark",
+            "scala_version" => Scala_Version,
+            "tflow_version" => TFlow_Version,
+            "maven_version" => Maven_Version,
+            "java_version" => Java_Version,
+            "java_home" => "/usr/lib/jvm/java-7-openjdk-amd64"
+          }
+          ansible.limit = "all"
+          ansible.verbose = "v"
+          ansible.raw_ssh_args = ['-o ControlPersist=30m']
+        end
+      end
+      config.vm.provider :vsphere do |vsphere|
+        vsphere.name = name
+        vsphere.template_name = Template
+        vsphere.linked_clone = false
+        vsphere.host = Host
+        vsphere.insecure = true
+        vsphere.compute_resource_name = Cluster
+        vsphere.user = Username
+        vsphere.password = Password
+      end  
+    end
+  end
+end
