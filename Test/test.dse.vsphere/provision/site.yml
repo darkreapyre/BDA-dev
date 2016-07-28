@@ -109,8 +109,8 @@
   roles:
   - opscenter
 
-# Using bare variables, try "{{ groups['dse'][1] }}""
-- hosts: "{{ groups['dse'][1] }}""
+# Using bare variables, try "{{ groups['dse'][1] }}"
+- hosts: "{{ groups['dse'][1] }}"
   tasks:
     - name: Get Spark Master address
       shell: /usr/bin/dse client-tool spark master-address
