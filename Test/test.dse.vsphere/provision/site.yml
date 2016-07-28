@@ -110,7 +110,7 @@
   - opscenter
 
 # Using bare variables, try "{{ groups['dse'][1] }}""
-- hosts: dse[1]
+- hosts: "{{ groups['dse'][1] }}""
   tasks:
     - name: Get Spark Master address
       shell: /usr/bin/dse client-tool spark master-address
@@ -129,7 +129,8 @@
     - admin
   
   vars:
-    master: "{{ master_address.stdout }}"
+#    master: "{{ master_address }}"
+    master: "{{ hostvars[groups['dse'][1]]['master_address'] }}"
 #    master: "blahblahblah"  #<-- for testing stand alone `admin` node install
     r_cran_mirror: http://cran.rstudio.com/
     r_packages_repos: "{{ r_cran_mirror }}"
