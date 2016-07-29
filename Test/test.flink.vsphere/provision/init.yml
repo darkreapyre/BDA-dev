@@ -1,8 +1,8 @@
 # Initialization Template
 # Save as init.yml when completed
-# Total number of Virtual Machines to deploy (inluding the admin node)
-# e.g. Total: 9
-Total: 6
+# Total number of Virtual Machines to deploy (inluding the admin node and flink-0 as the master)
+# e.g. Total: 10
+Total: 10
 
 # vSphere username
 # e.g. Username: "administrator@vsphere.local"
@@ -53,3 +53,6 @@ RStudio_Server: "0.99.903"
 
 # RStudio Shiny version
 Shiny_Version: "1.4.2.786"
+
+# Apache Flink version
+Flink_Version: "1.0.3"
