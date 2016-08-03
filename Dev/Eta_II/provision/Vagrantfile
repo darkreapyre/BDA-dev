@@ -25,6 +25,7 @@ TFlow_Version = @cmd['TFlow_Version']
 RStudio_Server = @cmd['RStudio_Server']
 Shiny_Version = @cmd['Shiny_Version']
 Flink_Version = @cmd['Flink_Version']
+Hadoop_Version = @cmd['Hadoop_Version']
 # -------------------------- END GLOBAL CONFIG PARAMS -----------------------
 
 groups = {
@@ -68,7 +69,8 @@ Vagrant.configure("2") do |config|
             "maven_version" => Maven_Version,
             "tflow_version" => TFlow_Version,
             "flink_version" => Flink_Version,
-            "scala_version" => Scala_Version,            
+            "scala_version" => Scala_Version,
+#            "hadoop_version" => Hadoop_Version,
             "cluster_user" => Master_User,
             "cluster_password" => Master_Password
           }

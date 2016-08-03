@@ -7,6 +7,10 @@
 #    may need to be built into the code as a 3rd party sink.
 # 2. Need to verify why the master has a REDIS server --> Can Cassandra be used (See above).
 # 3. Need  to verify if the ssh keys for the entire cluster will suffice on the flink odes.
+# 4. Verify is Hadoop is required.
+# 5. Investigate adding Spark streaming --> Separate Spakr role based on `spark.vsphere`.
+# 6. Inestogate Kafka streaming.
+# 7. Investigate the integration of  Tensorflow and TensorFlow Serving
 #
 #######################################################################################################################
 
