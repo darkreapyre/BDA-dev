@@ -143,7 +143,7 @@
   become: yes
 
   roles:
-    - admin
+    - DS
   
   vars:
     master: "{{ hostvars[groups['sofia'][0]]['master_address'] }}"
@@ -152,3 +152,11 @@
     r_repository:
       - type: deb
         url: "{{ r_cran_mirror }}/bin/linux/ubuntu {{ ansible_distribution_release }}/"
+
+#- name: Configure manaagement tools on admin node
+#  hosts: kage
+#  user: "{{ cluster_user}}"
+#  become: yes
+#
+#  roles:
+#    - admin

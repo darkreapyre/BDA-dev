@@ -10,7 +10,8 @@
 # 4. Verify is Hadoop is required.
 # 5. Investigate adding Spark streaming --> Separate Spakr role based on `spark.vsphere`.
 # 6. Inestogate Kafka streaming.
-# 7. Investigate the integration of  Tensorflow and TensorFlow Serving
+# 7. Investigate the integration of  Tensorflow (TensorFrames) and TensorFlow Serving
+# 8. Inbestigate integration with Titan (GraphX and GraphFrames)
 #
 #######################################################################################################################
 
